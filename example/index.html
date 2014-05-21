@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Mace Editor</title>
-  <link rel="stylesheet" href="../github-markdown-css/github-markdown.css">
+  <link rel="stylesheet" href="../build/github-markdown.css">
   <style>
     body {
       position: absolute;
@@ -10,7 +10,7 @@
       height: 100%;
       margin: 0;
     }
-    .mace {
+    .editor {
       position: absolute;
       top: 0;
       left: 0;
@@ -30,47 +30,15 @@
   </style>
 </head>
 <body>
-  <div id="mace" class="mace"></div>
+  <div id="editor" class="editor"></div>
   <div id="preview" class="preview markdown-body"></div>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
+  <script src="../build/mace.js"></script>
   <script>
-    var r1 = require.config({
-      baseUrl: "../ace/lib",
-      context: "ace"
-    });
-    var r2 = require.config({
-      baseUrl: "../marked/lib/",
-      context: "md"
-    });
-
     addEventListener("load", function () {
-      var preview = document.getElementById("preview");
+      var editor = document.getElementById("editor"),
+          preview = document.getElementById("preview");
 
-      r1(["ace/ace"], function (ace) {
-        var editor = ace.edit("mace");
-        editor.getSession().setMode("ace/mode/markdown");
-        editor.setTheme("ace/theme/monokai");
-
-        r2(["marked"], function (md) {
-          md.setOptions({
-            renderer: new md.Renderer(),
-            gfm: true,
-            tables: true,
-            breaks: true,
-            pedantic: false,
-            sanitize: true,
-            smartLists: true,
-            smartypants: false
-          });
-
-          editor.on("change", function () {
-            md(editor.getValue(), function (err, html) {
-              err && console.error(err);
-              preview.innerHTML = html;
-            });
-          });
-        });
-      });
+      mace(editor, preview);
     });
   </script>
 </body>
