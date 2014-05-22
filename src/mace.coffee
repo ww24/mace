@@ -31,9 +31,12 @@ this.mace = (editor, preview, options) ->
       ## update html preview
       preview.innerHTML = html
 
-  btn = options?.button
-  if btn
+  if btn = options?.button
     btn.indent?.addEventListener "click", ->
       editor.indent()
+      editor.focus()
+    btn.outdent?.addEventListener "click", ->
+      editor.blockOutdent()
+      editor.focus()
 
   return editor

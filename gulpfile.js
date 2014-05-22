@@ -8,15 +8,23 @@ var ace_deps = [
   "theme-monokai.js"
 ];
 
+var style_deps = [
+  "github-markdown.less",
+  "bootstrap.less"
+];
+
 var gulp = require("gulp")
     plug = require("gulp-load-plugins")();
 
 ace_deps = ace_deps.map(function (file) {
   return "ace/build/src-min-noconflict/" + file;
 });
+style_deps = style_deps.map(function (file) {
+  return "src/style/" + file;
+});
 
 gulp.task("clean", function () {
-  return gulp.src("build/*.js", {read: false})
+  return gulp.src("build", {read: false})
     .pipe(plug.clean());
 });
 
@@ -40,13 +48,20 @@ gulp.task("marked", function () {
     .pipe(gulp.dest("build"));
 });
 
-gulp.task("github-md-css", function () {
-  return gulp.src("github-markdown-css/github-markdown.css")
+gulp.task("style", function () {
+  return gulp.src(style_deps)
+    .pipe(plug.less())
     .pipe(plug.minifyCss())
+    .pipe(plug.concat("mace.css"))
     .pipe(gulp.dest("build"));
 });
 
-gulp.task("concat", ["mace", "ace", "marked", "github-md-css"], function () {
+gulp.task("fonts", function () {
+  return gulp.src("src/fonts/*")
+    .pipe(gulp.dest("build/fonts"));
+});
+
+gulp.task("concat", ["mace", "ace", "marked", "style", "fonts"], function () {
   return gulp.src(["build/ace.js", "build/marked.js", "build/mace.js"])
     .pipe(plug.concat("mace.js"))
     .pipe(gulp.dest("build"));
