@@ -71,7 +71,7 @@
       var editor = document.getElementById("edit-inner"),
           preview = document.getElementById("preview");
 
-      mace(editor, preview, {
+      var mace = new Mace(editor, preview, {
         button: {
           indent: document.getElementById("indent"),
           outdent: document.getElementById("outdent")
