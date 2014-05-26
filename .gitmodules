@@ -1,0 +1,9 @@
+[submodule "ace"]
+	path = ace
+	url = git@github.com:ajaxorg/ace.git
+[submodule "github-markdown-css"]
+	path = github-markdown-css
+	url = git@github.com:sindresorhus/github-markdown-css.git
+[submodule "marked"]
+	path = marked
+	url = git@github.com:chjj/marked.git
