@@ -1,4 +1,4 @@
-Mace
+Mace [![Build Status][travis-img]][travis-url]
 ====
 
 Mace = Markdown editor powered by Ace.
@@ -15,3 +15,6 @@ Feature (coming soon)
 License
 -------
 MIT
+
+[travis-url]: https://travis-ci.org/ww24/mace
+[travis-img]: https://img.shields.io/travis/ww24/mace.svg?branch=master&style=flat
