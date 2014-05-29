@@ -6,7 +6,7 @@
   "scripts": {
     "start": "gulp",
     "pretest": "gulp",
-    "test": "testem ci",
+    "test": "testem -l phantomjs,firefox ci",
     "coveralls": "poncho --reporter lcov test/index.html | coveralls"
   },
   "repository": {
