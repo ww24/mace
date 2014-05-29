@@ -13,7 +13,7 @@ var style_deps = [
   "bootstrap.less"
 ];
 
-var gulp = require("gulp")
+var gulp = require("gulp"),
     plug = require("gulp-load-plugins")();
 
 ace_deps = ace_deps.map(function (file) {
@@ -43,7 +43,7 @@ gulp.task("ace", function () {
 });
 
 gulp.task("marked", function () {
-  return gulp.src("marked/lib/marked.js")
+  return gulp.src("src/vendor/marked.js")
     .pipe(plug.uglify({preserveComments: "some"}))
     .pipe(gulp.dest("build"));
 });
