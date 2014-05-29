@@ -6,7 +6,8 @@
   "scripts": {
     "start": "gulp",
     "pretest": "gulp",
-    "test": "testem ci"
+    "test": "testem ci",
+    "coveralls": "poncho --reporter lcov test/index.html | coveralls"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "private": true,
   "devDependencies": {
     "chai": "^1.9.1",
+    "coveralls": "^2.10.0",
     "gulp": "^3.6.2",
     "gulp-clean": "^0.2.4",
     "gulp-coffee": "^1.4.3",
@@ -30,8 +32,8 @@
     "gulp-load-plugins": "^0.5.1",
     "gulp-minify-css": "^0.3.4",
     "gulp-uglify": "^0.3.0",
-    "istanbul": "^0.2.10",
     "mocha": "^1.19.0",
+    "poncho": "^0.1.1",
     "testem": "^0.6.15"
   }
 }
