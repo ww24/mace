@@ -8,3 +8,6 @@ build
 
 # Travis CI
 !.travis.yml
+
+# Coverage (istanbul)
+coverage
