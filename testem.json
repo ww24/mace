@@ -1,0 +1,8 @@
+{
+  "framework": "mocha",
+  "src_files": [
+    "node_modules/chai/chai.js",
+    "build/mace.min.js",
+    "test/*.js"
+  ]
+}

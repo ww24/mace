@@ -1,4 +1,13 @@
 .*
 !.gitignore
 
+node_modules
 *.log
+
+build
+
+# Travis CI
+!.travis.yml
+
+# Coverage (istanbul)
+coverage
