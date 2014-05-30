@@ -1,4 +1,4 @@
-Mace [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]](coveralls-url)
+Mace [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url]
 ====
 
 Mace = Markdown editor powered by Ace.
