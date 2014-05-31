@@ -13,6 +13,11 @@ describe("Mace", function () {
     editor.appendChild(document.createTextNode("test"));
 
     mace = new Mace(editor, preview);
+    chai.expect(mace).to.have.property("value").and.to.equal("test");
+  });
+  beforeEach(function () {
+    mace.clear(true);
+    chai.expect(mace.value).to.equal("");
   });
 
   it("check properties", function () {
@@ -22,10 +27,12 @@ describe("Mace", function () {
   });
 
   it("value", function () {
-    chai.expect(mace).to.have.property("value").and.to.equal("test");
+    mace.ace.insert("hello");
+    chai.expect(mace).to.have.property("value").and.to.equal("hello");
   });
 
   it("#clear", function () {
+    mace.ace.insert("clear");
     chai.expect(mace.clear(true)).to.equal(1);
     chai.expect(mace.value).to.equal("");
   });
@@ -33,14 +40,12 @@ describe("Mace", function () {
   it("#indent", function () {
     mace.indent();
     chai.expect(mace.value).to.equal("    ");
-    mace.clear(true);
   });
 
   it("#outdent", function () {
     mace.indent(2);
     mace.outdent();
     chai.expect(mace.value).to.equal("    ");
-    mace.clear(true);
   });
 
   it("heading");

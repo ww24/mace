@@ -14,9 +14,9 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'node_modules/chai/chai.js',
-      'build/depend/ace.min.js',
-      'build/depend/marked.min.js',
-      'build/depend/mace-core.js',
+      'build/deps/ace.min.js',
+      'build/deps/marked.min.js',
+      'build/deps/mace-core.js',
       'test/*.js'
     ],
 
@@ -28,7 +28,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'build/depend/mace-core.js': 'coverage'
+      'build/deps/mace-core.js': 'coverage'
     },
 
     // test results reporter to use
