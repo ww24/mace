@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Mace Editor</title>
-  <link rel="stylesheet" href="../build/github-markdown.css">
+  <link rel="stylesheet" href="../build/mace.css">
   <style>
     body {
       position: absolute;
@@ -15,6 +15,25 @@
       top: 0;
       left: 0;
       width: 50%;
+      height: 100%;
+    }
+    .buttons {
+      position: relative;
+      height: 30px;
+      z-index: 10;
+    }
+    .edit-area {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding-top: 30px;
+      box-sizing: border-box;
+      z-index: 1;
+    }
+    .edit-area > div {
+      width: 100%;
       height: 100%;
     }
     .preview {
@@ -30,15 +49,47 @@
   </style>
 </head>
 <body>
-  <div id="editor" class="editor"></div>
+  <div id="editor" class="editor">
+    <div class="buttons">
+      <div class="btn-group btn-group-sm">
+        <div id="indent" class="btn btn-default">
+          <span class="glyphicon glyphicon-indent-left"></span>
+        </div>
+        <div id="outdent" class="btn btn-default">
+          <span class="glyphicon glyphicon-indent-right"></span>
+        </div>
+        <div id="save" class="btn btn-default">
+          <span class="glyphicon glyphicon-floppy-disk"></span>
+        </div>
+      </div>
+    </div>
+    <div class="edit-area">
+<div id="edit-inner">Mace
+====
+
+Mace = Markdown editor powered by Ace.
+</div>
+    </div>
+  </div>
   <div id="preview" class="preview markdown-body"></div>
-  <script src="../build/mace.js"></script>
+  <script src="../build/mace.min.js"></script>
   <script>
+    var mace;
     addEventListener("load", function () {
-      var editor = document.getElementById("editor"),
+      var editor = document.getElementById("edit-inner"),
           preview = document.getElementById("preview");
 
-      mace(editor, preview);
+      mace = new Mace(editor, preview, {
+        button: {
+          indent: document.getElementById("indent"),
+          outdent: document.getElementById("outdent")
+        }
+      });
+
+      document.getElementById("save").addEventListener("click", function () {
+        console.log(mace.value);
+        alert("markdown を console に出力しました。");
+      });
     });
   </script>
 </body>
