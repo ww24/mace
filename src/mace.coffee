@@ -28,15 +28,10 @@ class Mace
       smartypants: false
 
     # markdown realtime preview
-    if preview isnt null
+    if @preview isnt null
+      @_render()
       ## listen editor change event
-      @ace.on "change", =>
-        markdown = @ace.getValue()
-        ## compile markdown
-        marked markdown, (err, html) =>
-          if err? then console.error err
-          ## update html preview
-          preview.innerHTML = html
+      @ace.on "change", => @_render()
 
     # mace.value => String
     Object.defineProperty Mace::, "value",
@@ -50,8 +45,17 @@ class Mace
     # DOM binding
     if btn = options.button
       Object.keys(Mace::).forEach (prop) ->
+        return if prop.charAt(0) is "_"
         btn[prop]?.addEventListener "click", ->
           mace[prop].apply mace, @.dataset.maceArgs?.split ","
+
+  _render: () ->
+    markdown = @ace.getValue()
+    ## compile markdown
+    marked markdown, (err, html) =>
+      console.error err if err?
+      ## update html preview
+      @preview.innerHTML = html
 
   indent: (count = 1) ->
     @ace.indent() for i in [0...count]

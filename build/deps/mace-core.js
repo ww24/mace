@@ -31,17 +31,11 @@
         smartLists: true,
         smartypants: false
       });
-      if (preview !== null) {
+      if (this.preview !== null) {
+        this._render();
         this.ace.on("change", (function(_this) {
           return function() {
-            var markdown;
-            markdown = _this.ace.getValue();
-            return marked(markdown, function(err, html) {
-              if (err != null) {
-                console.error(err);
-              }
-              return preview.innerHTML = html;
-            });
+            return _this._render();
           };
         })(this));
       }
@@ -61,6 +55,9 @@
       if (btn = options.button) {
         Object.keys(Mace.prototype).forEach(function(prop) {
           var _ref;
+          if (prop.charAt(0) === "_") {
+            return;
+          }
           return (_ref = btn[prop]) != null ? _ref.addEventListener("click", function() {
             var _ref1;
             return mace[prop].apply(mace, (_ref1 = this.dataset.maceArgs) != null ? _ref1.split(",") : void 0);
@@ -68,6 +65,19 @@
         });
       }
     }
+
+    Mace.prototype._render = function() {
+      var markdown;
+      markdown = this.ace.getValue();
+      return marked(markdown, (function(_this) {
+        return function(err, html) {
+          if (err != null) {
+            console.error(err);
+          }
+          return _this.preview.innerHTML = html;
+        };
+      })(this));
+    };
 
     Mace.prototype.indent = function(count) {
       var i, _i;
