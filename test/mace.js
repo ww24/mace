@@ -33,13 +33,13 @@ describe("Mace", function () {
 
   it("#clear", function () {
     mace.ace.insert("clear");
-    chai.expect(mace.clear(true)).to.equal(1);
+    mace.clear(true);
     chai.expect(mace.value).to.equal("");
   });
 
   it("#clear (remove current line)", function () {
     mace.ace.insert("clear\nline");
-    chai.expect(mace.clear()).to.equal(1);
+    mace.clear();
     chai.expect(mace.value).to.equal("clear");
   });
 

@@ -96,17 +96,9 @@
         force = false;
       }
       if (force) {
-        return ((function() {
-          var _results;
-          _results = [];
-          while (this.value !== "") {
-            _results.push(this.ace.removeLines());
-          }
-          return _results;
-        }).call(this)).length;
+        return this.ace.setValue("");
       } else {
-        this.ace.removeLines();
-        return 1;
+        return this.ace.removeLines();
       }
     };
 
