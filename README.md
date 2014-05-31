@@ -12,6 +12,10 @@ Feature (coming soon)
 * Markdown Extra syntax support
 * GUI for Markdown syntax
 
+Usage
+-----
+Ref: `example/index.html`
+
 How to build
 ------------
 1. `npm install`
