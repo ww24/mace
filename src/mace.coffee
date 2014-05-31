@@ -8,7 +8,9 @@
 
 ## new mace(DOMElement editor, DOMElement preview[, options])
 class Mace
-  constructor: (@editor, @preview, options) ->
+  constructor: (@editor, @preview = null, options = {}) ->
+    mace = @
+
     ## ace settings
     @ace = ace.edit @editor
     @ace.getSession().setMode "ace/mode/markdown"
@@ -16,7 +18,7 @@ class Mace
 
     ## marked settings
     marked.setOptions
-      renderer: new marked.Renderer
+      renderer: new marked.Renderer()
       gfm: true
       tables: true
       breaks: true
@@ -25,23 +27,35 @@ class Mace
       smartLists: true
       smartypants: false
 
-    ## listen editor change event
-    @ace.on "change", =>
-      markdown = @ace.getValue()
-      ## compile markdown
-      marked markdown, (err, html) =>
-        if err? then console.error err
-        ## update html preview
-        preview.innerHTML = html
+    # markdown realtime preview
+    if @preview isnt null
+      @_render()
+      ## listen editor change event
+      @ace.on "change", => @_render()
 
     # mace.value => String
     Object.defineProperty Mace::, "value",
       get: -> @ace.getValue()
 
-    if btn = options?.button
-      btn.indent?.addEventListener "click", @indent.bind @, 1
-      btn.outdent?.addEventListener "click", @outdent.bind @, 1
-      btn.heading?.addEventListener "click", @heading.bind @, 1
+    # mace.font_size => Number
+    Object.defineProperty Mace::, "font_size",
+      get: -> @ace.getFontSize()
+      set: (size) -> @ace.setFontSize(size)
+
+    # DOM binding
+    if btn = options.button
+      Object.keys(Mace::).forEach (prop) ->
+        return if prop.charAt(0) is "_"
+        btn[prop]?.addEventListener "click", ->
+          mace[prop].apply mace, @.dataset.maceArgs?.split ","
+
+  _render: () ->
+    markdown = @ace.getValue()
+    ## compile markdown
+    marked markdown, (err, html) =>
+      console.error err if err?
+      ## update html preview
+      @preview.innerHTML = html
 
   indent: (count = 1) ->
     @ace.indent() for i in [0...count]
@@ -52,12 +66,22 @@ class Mace
     @ace.focus()
 
   heading: (count = 1) ->
+    pos = @ace.getCursorPosition()
     @ace.navigateLineStart()
     @ace.insert "#" for i in [0...count]
+    @ace.moveCursorTo pos.row, pos.column + count
+    @ace.focus()
+
+  link: (href = "./", link_text) ->
+    selected_text = @ace.getCopyText().split("\n").join("")
+    link_text = link_text or selected_text or "link"
+    @ace.insert "[#{link_text}](#{href})"
     @ace.focus()
 
   clear: (force = false) ->
     if force
-      (@ace.removeLines() until @value is "").length
+      @ace.setValue ""
+    else
+      @ace.removeLines()
 
 this.Mace = Mace;

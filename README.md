@@ -12,6 +12,27 @@ Feature (coming soon)
 * Markdown Extra syntax support
 * GUI for Markdown syntax
 
+Usage
+-----
+Ref: `example/index.html`
+
+How to build
+------------
+1. `npm install`
+1. `npm start`
+1. open `example/index.html`
+
+Test
+----
+1. install PhantomJS and Firefox
+1. `npm test`
+
+Coverage
+--------
+1. install PhantomJS
+1. `npm run coverage`
+1. open `coverage/~/lcov-report/index.html`
+
 License
 -------
 MIT

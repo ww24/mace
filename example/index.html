@@ -58,24 +58,37 @@
         <div id="outdent" class="btn btn-default">
           <span class="glyphicon glyphicon-indent-right"></span>
         </div>
+        <div id="save" class="btn btn-default">
+          <span class="glyphicon glyphicon-floppy-disk"></span>
+        </div>
       </div>
     </div>
     <div class="edit-area">
-      <div id="edit-inner"></div>
+<div id="edit-inner">Mace
+====
+
+Mace = Markdown editor powered by Ace.
+</div>
     </div>
   </div>
   <div id="preview" class="preview markdown-body"></div>
-  <script src="../build/mace.js"></script>
+  <script src="../build/mace.min.js"></script>
   <script>
+    var mace;
     addEventListener("load", function () {
       var editor = document.getElementById("edit-inner"),
           preview = document.getElementById("preview");
 
-      var mace = new Mace(editor, preview, {
+      mace = new Mace(editor, preview, {
         button: {
           indent: document.getElementById("indent"),
           outdent: document.getElementById("outdent")
         }
+      });
+
+      document.getElementById("save").addEventListener("click", function () {
+        console.log(mace.value);
+        alert("markdown を console に出力しました。");
       });
     });
   </script>
