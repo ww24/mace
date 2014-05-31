@@ -4,6 +4,8 @@
  * for browser
  */
 
+var expect = chai.expect;
+
 describe("Mace", function () {
   var mace;
   before(function () {
@@ -13,45 +15,51 @@ describe("Mace", function () {
     editor.appendChild(document.createTextNode("test"));
 
     mace = new Mace(editor, preview);
-    chai.expect(mace).to.have.property("value").and.to.equal("test");
+    expect(mace).to.have.property("value").and.to.equal("test");
   });
   beforeEach(function () {
     mace.clear(true);
-    chai.expect(mace.value).to.equal("");
+    expect(mace.value).to.equal("");
+    mace.font_size = 12;
   });
 
   it("check properties", function () {
-    chai.expect(mace).to.have.property("ace").and.to.be.an("object");
-    chai.expect(mace).to.have.property("editor").and.to.be.an("object");
-    chai.expect(mace).to.have.property("preview").and.to.be.an("object");
+    expect(mace).to.have.property("ace").and.to.be.an("object");
+    expect(mace).to.have.property("editor").and.to.be.an("object");
+    expect(mace).to.have.property("preview").and.to.be.an("object");
   });
 
   it("value", function () {
     mace.ace.insert("hello");
-    chai.expect(mace).to.have.property("value").and.to.equal("hello");
+    expect(mace).to.have.property("value").and.to.equal("hello");
+  });
+
+  it("font_size", function () {
+    expect(mace).to.have.property("font_size").and.to.equal(12);
+    expect(++mace.font_size).to.equal(13);
   });
 
   it("#clear", function () {
     mace.ace.insert("clear");
     mace.clear(true);
-    chai.expect(mace.value).to.equal("");
+    expect(mace.value).to.equal("");
   });
 
   it("#clear (remove current line)", function () {
     mace.ace.insert("clear\nline");
     mace.clear();
-    chai.expect(mace.value).to.equal("clear");
+    expect(mace.value).to.equal("clear");
   });
 
   it("#indent", function () {
     mace.indent();
-    chai.expect(mace.value).to.equal("    ");
+    expect(mace.value).to.equal("    ");
   });
 
   it("#outdent", function () {
     mace.indent(2);
     mace.outdent();
-    chai.expect(mace.value).to.equal("    ");
+    expect(mace.value).to.equal("    ");
   });
 
   it("heading");

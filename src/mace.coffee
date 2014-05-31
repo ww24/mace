@@ -38,6 +38,11 @@ class Mace
     Object.defineProperty Mace::, "value",
       get: -> @ace.getValue()
 
+    # mace.font_size => Number
+    Object.defineProperty Mace::, "font_size",
+      get: -> @ace.getFontSize()
+      set: (size) -> @ace.setFontSize(size)
+
     if btn = options?.button
       btn.indent?.addEventListener "click", @indent.bind @, 1
       btn.outdent?.addEventListener "click", @outdent.bind @, 1

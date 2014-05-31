@@ -44,6 +44,14 @@
           return this.ace.getValue();
         }
       });
+      Object.defineProperty(Mace.prototype, "font_size", {
+        get: function() {
+          return this.ace.getFontSize();
+        },
+        set: function(size) {
+          return this.ace.setFontSize(size);
+        }
+      });
       if (btn = options != null ? options.button : void 0) {
         if ((_ref = btn.indent) != null) {
           _ref.addEventListener("click", this.indent.bind(this, 1));
