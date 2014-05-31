@@ -11,14 +11,18 @@
 
   Mace = (function() {
     function Mace(editor, preview, options) {
-      var btn, _ref, _ref1, _ref2;
+      var btn, mace;
       this.editor = editor;
-      this.preview = preview;
+      this.preview = preview != null ? preview : null;
+      if (options == null) {
+        options = {};
+      }
+      mace = this;
       this.ace = ace.edit(this.editor);
       this.ace.getSession().setMode("ace/mode/markdown");
       this.ace.setTheme("ace/theme/monokai");
       marked.setOptions({
-        renderer: new marked.Renderer,
+        renderer: new marked.Renderer(),
         gfm: true,
         tables: true,
         breaks: true,
@@ -27,35 +31,53 @@
         smartLists: true,
         smartypants: false
       });
-      this.ace.on("change", (function(_this) {
-        return function() {
-          var markdown;
-          markdown = _this.ace.getValue();
-          return marked(markdown, function(err, html) {
-            if (err != null) {
-              console.error(err);
-            }
-            return preview.innerHTML = html;
-          });
-        };
-      })(this));
+      if (this.preview !== null) {
+        this._render();
+        this.ace.on("change", (function(_this) {
+          return function() {
+            return _this._render();
+          };
+        })(this));
+      }
       Object.defineProperty(Mace.prototype, "value", {
         get: function() {
           return this.ace.getValue();
         }
       });
-      if (btn = options != null ? options.button : void 0) {
-        if ((_ref = btn.indent) != null) {
-          _ref.addEventListener("click", this.indent.bind(this, 1));
+      Object.defineProperty(Mace.prototype, "font_size", {
+        get: function() {
+          return this.ace.getFontSize();
+        },
+        set: function(size) {
+          return this.ace.setFontSize(size);
         }
-        if ((_ref1 = btn.outdent) != null) {
-          _ref1.addEventListener("click", this.outdent.bind(this, 1));
-        }
-        if ((_ref2 = btn.heading) != null) {
-          _ref2.addEventListener("click", this.heading.bind(this, 1));
-        }
+      });
+      if (btn = options.button) {
+        Object.keys(Mace.prototype).forEach(function(prop) {
+          var _ref;
+          if (prop.charAt(0) === "_") {
+            return;
+          }
+          return (_ref = btn[prop]) != null ? _ref.addEventListener("click", function() {
+            var _ref1;
+            return mace[prop].apply(mace, (_ref1 = this.dataset.maceArgs) != null ? _ref1.split(",") : void 0);
+          }) : void 0;
+        });
       }
     }
+
+    Mace.prototype._render = function() {
+      var markdown;
+      markdown = this.ace.getValue();
+      return marked(markdown, (function(_this) {
+        return function(err, html) {
+          if (err != null) {
+            console.error(err);
+          }
+          return _this.preview.innerHTML = html;
+        };
+      })(this));
+    };
 
     Mace.prototype.indent = function(count) {
       var i, _i;
@@ -80,14 +102,27 @@
     };
 
     Mace.prototype.heading = function(count) {
-      var i, _i;
+      var i, pos, _i;
       if (count == null) {
         count = 1;
       }
+      pos = this.ace.getCursorPosition();
       this.ace.navigateLineStart();
       for (i = _i = 0; 0 <= count ? _i < count : _i > count; i = 0 <= count ? ++_i : --_i) {
         this.ace.insert("#");
       }
+      this.ace.moveCursorTo(pos.row, pos.column + count);
+      return this.ace.focus();
+    };
+
+    Mace.prototype.link = function(href, link_text) {
+      var selected_text;
+      if (href == null) {
+        href = "./";
+      }
+      selected_text = this.ace.getCopyText().split("\n").join("");
+      link_text = link_text || selected_text || "link";
+      this.ace.insert("[" + link_text + "](" + href + ")");
       return this.ace.focus();
     };
 
@@ -96,14 +131,9 @@
         force = false;
       }
       if (force) {
-        return ((function() {
-          var _results;
-          _results = [];
-          while (this.value !== "") {
-            _results.push(this.ace.removeLines());
-          }
-          return _results;
-        }).call(this)).length;
+        return this.ace.setValue("");
+      } else {
+        return this.ace.removeLines();
       }
     };
 
