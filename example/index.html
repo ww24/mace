@@ -67,11 +67,12 @@
   <div id="preview" class="preview markdown-body"></div>
   <script src="../build/mace.min.js"></script>
   <script>
+    var mace;
     addEventListener("load", function () {
       var editor = document.getElementById("edit-inner"),
           preview = document.getElementById("preview");
 
-      var mace = new Mace(editor, preview, {
+      mace = new Mace(editor, preview, {
         button: {
           indent: document.getElementById("indent"),
           outdent: document.getElementById("outdent")

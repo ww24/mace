@@ -37,6 +37,12 @@ describe("Mace", function () {
     chai.expect(mace.value).to.equal("");
   });
 
+  it("#clear (remove current line)", function () {
+    mace.ace.insert("clear\nline");
+    chai.expect(mace.clear()).to.equal(1);
+    chai.expect(mace.value).to.equal("clear");
+  });
+
   it("#indent", function () {
     mace.indent();
     chai.expect(mace.value).to.equal("    ");

@@ -59,5 +59,8 @@ class Mace
   clear: (force = false) ->
     if force
       (@ace.removeLines() until @value is "").length
+    else
+      @ace.removeLines()
+      return 1
 
 this.Mace = Mace;
