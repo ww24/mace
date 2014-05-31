@@ -11,14 +11,18 @@
 
   Mace = (function() {
     function Mace(editor, preview, options) {
-      var btn, _ref, _ref1, _ref2;
+      var btn, mace;
       this.editor = editor;
-      this.preview = preview;
+      this.preview = preview != null ? preview : null;
+      if (options == null) {
+        options = {};
+      }
+      mace = this;
       this.ace = ace.edit(this.editor);
       this.ace.getSession().setMode("ace/mode/markdown");
       this.ace.setTheme("ace/theme/monokai");
       marked.setOptions({
-        renderer: new marked.Renderer,
+        renderer: new marked.Renderer(),
         gfm: true,
         tables: true,
         breaks: true,
@@ -27,18 +31,20 @@
         smartLists: true,
         smartypants: false
       });
-      this.ace.on("change", (function(_this) {
-        return function() {
-          var markdown;
-          markdown = _this.ace.getValue();
-          return marked(markdown, function(err, html) {
-            if (err != null) {
-              console.error(err);
-            }
-            return preview.innerHTML = html;
-          });
-        };
-      })(this));
+      if (preview !== null) {
+        this.ace.on("change", (function(_this) {
+          return function() {
+            var markdown;
+            markdown = _this.ace.getValue();
+            return marked(markdown, function(err, html) {
+              if (err != null) {
+                console.error(err);
+              }
+              return preview.innerHTML = html;
+            });
+          };
+        })(this));
+      }
       Object.defineProperty(Mace.prototype, "value", {
         get: function() {
           return this.ace.getValue();
@@ -52,16 +58,14 @@
           return this.ace.setFontSize(size);
         }
       });
-      if (btn = options != null ? options.button : void 0) {
-        if ((_ref = btn.indent) != null) {
-          _ref.addEventListener("click", this.indent.bind(this, 1));
-        }
-        if ((_ref1 = btn.outdent) != null) {
-          _ref1.addEventListener("click", this.outdent.bind(this, 1));
-        }
-        if ((_ref2 = btn.heading) != null) {
-          _ref2.addEventListener("click", this.heading.bind(this, 1));
-        }
+      if (btn = options.button) {
+        Object.keys(Mace.prototype).forEach(function(prop) {
+          var _ref;
+          return (_ref = btn[prop]) != null ? _ref.addEventListener("click", function() {
+            var _ref1;
+            return mace[prop].apply(mace, (_ref1 = this.dataset.maceArgs) != null ? _ref1.split(",") : void 0);
+          }) : void 0;
+        });
       }
     }
 
@@ -88,14 +92,27 @@
     };
 
     Mace.prototype.heading = function(count) {
-      var i, _i;
+      var i, pos, _i;
       if (count == null) {
         count = 1;
       }
+      pos = this.ace.getCursorPosition();
       this.ace.navigateLineStart();
       for (i = _i = 0; 0 <= count ? _i < count : _i > count; i = 0 <= count ? ++_i : --_i) {
         this.ace.insert("#");
       }
+      this.ace.moveCursorTo(pos.row, pos.column + count);
+      return this.ace.focus();
+    };
+
+    Mace.prototype.link = function(href, link_text) {
+      var selected_text;
+      if (href == null) {
+        href = "./";
+      }
+      selected_text = this.ace.getCopyText().split("\n").join("");
+      link_text = link_text || selected_text || "link";
+      this.ace.insert("[" + link_text + "](" + href + ")");
       return this.ace.focus();
     };
 

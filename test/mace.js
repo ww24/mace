@@ -1,4 +1,4 @@
-/* globals chai, Mace */
+/* globals chai, Mace, ace */
 /**
  * Mace Test
  * for browser
@@ -7,6 +7,10 @@
 var expect = chai.expect;
 
 describe("Mace", function () {
+  var Ace = {
+    Range: ace.require("ace/range").Range
+  };
+
   var mace;
   before(function () {
     var editor = document.createElement("div"),
@@ -63,4 +67,27 @@ describe("Mace", function () {
   });
 
   it("heading");
+
+  it("link (empty)", function () {
+    mace.link();
+    expect(mace.value).to.equal("[link](./)");
+  });
+
+  it("link (select)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+    mace.link("https://github.com/ww24/mace");
+    expect(mace.value).to.equal("This is a [editor](https://github.com/ww24/mace).");
+  });
+
+  it("link (select & set link_text)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+    mace.link("https://github.com/ww24/mace", "mace");
+    expect(mace.value).to.equal("This is a [mace](https://github.com/ww24/mace).");
+  });
 });
