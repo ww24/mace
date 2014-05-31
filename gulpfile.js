@@ -32,24 +32,24 @@ gulp.task("mace", function () {
   return gulp.src("src/*.coffee")
     .pipe(plug.coffee())
     .pipe(plug.concat("mace-core.js"))
-    .pipe(gulp.dest("build/depend"))
+    .pipe(gulp.dest("build/deps"))
     .pipe(plug.uglify({preserveComments: "some"}))
     .pipe(plug.concat("mace-core.min.js"))
-    .pipe(gulp.dest("build/depend"));
+    .pipe(gulp.dest("build/deps"));
 });
 
 gulp.task("ace", function () {
   return gulp.src(ace_deps)
     .pipe(plug.insert.append(";"))
     .pipe(plug.concat("ace.min.js"))
-    .pipe(gulp.dest("build/depend"));
+    .pipe(gulp.dest("build/deps"));
 });
 
 gulp.task("marked", function () {
   return gulp.src("src/vendor/marked.js")
     .pipe(plug.uglify({preserveComments: "some"}))
     .pipe(plug.concat("marked.min.js"))
-    .pipe(gulp.dest("build/depend"));
+    .pipe(gulp.dest("build/deps"));
 });
 
 gulp.task("style", function () {
@@ -66,7 +66,7 @@ gulp.task("fonts", function () {
 });
 
 gulp.task("concat", ["mace", "ace", "marked", "style", "fonts"], function () {
-  return gulp.src("build/depend/*.min.js")
+  return gulp.src("build/deps/*.min.js")
     .pipe(plug.concat("mace.min.js"))
     .pipe(gulp.dest("build"));
 });
