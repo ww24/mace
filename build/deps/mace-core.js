@@ -39,12 +39,12 @@
           };
         })(this));
       }
-      Object.defineProperty(Mace.prototype, "value", {
+      Object.defineProperty(this, "value", {
         get: function() {
           return this.ace.getValue();
         }
       });
-      Object.defineProperty(Mace.prototype, "font_size", {
+      Object.defineProperty(this, "font_size", {
         get: function() {
           return this.ace.getFontSize();
         },

@@ -34,11 +34,11 @@ class Mace
       @ace.on "change", => @_render()
 
     # mace.value => String
-    Object.defineProperty Mace::, "value",
+    Object.defineProperty @, "value",
       get: -> @ace.getValue()
 
     # mace.font_size => Number
-    Object.defineProperty Mace::, "font_size",
+    Object.defineProperty @, "font_size",
       get: -> @ace.getFontSize()
       set: (size) -> @ace.setFontSize(size)
 
