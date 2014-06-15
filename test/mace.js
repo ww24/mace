@@ -90,4 +90,22 @@ describe("Mace", function () {
     mace.link("https://github.com/ww24/mace", "mace");
     expect(mace.value).to.equal("This is a [mace](https://github.com/ww24/mace).");
   });
+
+  it("link (select & set link_text & set title)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+    mace.link("https://github.com/ww24/mace", "mace", "title");
+    expect(mace.value).to.equal("This is a [mace](https://github.com/ww24/mace \"title\").");
+  });
+
+  it("link (select & set link_text & set title & image)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+    mace.link("https://github.com/ww24/mace", "mace", "title", true);
+    expect(mace.value).to.equal("This is a ![mace](https://github.com/ww24/mace \"title\").");
+  });
 });

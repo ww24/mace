@@ -72,10 +72,12 @@ class Mace
     @ace.moveCursorTo pos.row, pos.column + count
     @ace.focus()
 
-  link: (href = "./", link_text) ->
+  link: (href = "./", link_text, title = "", is_image = false) ->
     selected_text = @ace.getCopyText().split("\n").join("")
     link_text = link_text or selected_text or "link"
-    @ace.insert "[#{link_text}](#{href})"
+    title = " \"#{title}\"" if title.length > 0
+    image = ["", "!"][+ is_image]
+    @ace.insert "#{image}[#{link_text}](#{href}#{title})"
     @ace.focus()
 
   clear: (force = false) ->

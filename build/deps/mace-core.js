@@ -115,14 +115,24 @@
       return this.ace.focus();
     };
 
-    Mace.prototype.link = function(href, link_text) {
-      var selected_text;
+    Mace.prototype.link = function(href, link_text, title, is_image) {
+      var image, selected_text;
       if (href == null) {
         href = "./";
       }
+      if (title == null) {
+        title = "";
+      }
+      if (is_image == null) {
+        is_image = false;
+      }
       selected_text = this.ace.getCopyText().split("\n").join("");
       link_text = link_text || selected_text || "link";
-      this.ace.insert("[" + link_text + "](" + href + ")");
+      if (title.length > 0) {
+        title = " \"" + title + "\"";
+      }
+      image = ["", "!"][+is_image];
+      this.ace.insert("" + image + "[" + link_text + "](" + href + title + ")");
       return this.ace.focus();
     };
 
