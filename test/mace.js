@@ -95,7 +95,7 @@ describe("Mace", function () {
   });
 
   it("heading (select multi line)", function () {
-    mace.ace.insert("##Mace\nMace = Markdown editor powered by Ace.\n\n");
+    mace.ace.insert("##Mace\n###Mace = Markdown editor powered by Ace.\n\n");
     var range = new Ace.Range(0, 0, 2, 0);
     mace.ace.moveCursorTo(2, 0);
     mace.ace.selection.addRange(range);
