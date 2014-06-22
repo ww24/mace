@@ -22,6 +22,7 @@ describe("Mace", function () {
     expect(mace).to.have.property("value").and.to.equal("test");
   });
   beforeEach(function () {
+    mace.ace.selection.clearSelection();
     mace.clear(true);
     expect(mace.value).to.equal("");
     mace.font_size = 12;
@@ -43,7 +44,7 @@ describe("Mace", function () {
     expect(++mace.font_size).to.equal(13);
   });
 
-  it("#clear", function () {
+  it("#clear (remove all)", function () {
     mace.ace.insert("clear");
     mace.clear(true);
     expect(mace.value).to.equal("");
@@ -66,7 +67,46 @@ describe("Mace", function () {
     expect(mace.value).to.equal("    ");
   });
 
-  it("heading");
+  it("heading", function () {
+    mace.ace.insert("Mace");
+    mace.heading();
+    expect(mace.value).to.equal("#Mace");
+  });
+
+  it("heading (level up 1 -> 2)", function () {
+    mace.ace.insert("#Mace");
+    mace.heading(2);
+    expect(mace.value).to.equal("##Mace");
+  });
+
+  it("heading (level down 2 -> 1)", function () {
+    mace.ace.insert("##Mace");
+    mace.heading(1);
+    expect(mace.value).to.equal("#Mace");
+  });
+
+  it("heading (select a line)", function () {
+    mace.ace.insert("##Mace\nMace = Markdown editor powered by Ace.\n");
+    var range = new Ace.Range(1, 0, 2, 0);
+    mace.ace.moveCursorTo(2, 0);
+    mace.ace.selection.addRange(range);
+    mace.heading(3);
+    expect(mace.value).to.equal("##Mace\n###Mace = Markdown editor powered by Ace.\n");
+  });
+
+  it("heading (select multi line)", function () {
+    mace.ace.insert("##Mace\n###Mace = Markdown editor powered by Ace.\n\n");
+    var range = new Ace.Range(0, 0, 2, 0);
+    mace.ace.moveCursorTo(2, 0);
+    mace.ace.selection.addRange(range);
+    mace.heading(3);
+    expect(mace.value).to.equal("###Mace\n###Mace = Markdown editor powered by Ace.\n###\n");
+  });
+
+  it("heading (range check)", function () {
+    expect(mace.heading.bind(mace, -1)).to.throw(RangeError);
+    expect(mace.heading.bind(mace, 7)).to.throw(RangeError);
+  });
 
   it("link (empty)", function () {
     mace.link();
@@ -89,5 +129,23 @@ describe("Mace", function () {
     mace.ace.selection.addRange(range);
     mace.link("https://github.com/ww24/mace", "mace");
     expect(mace.value).to.equal("This is a [mace](https://github.com/ww24/mace).");
+  });
+
+  it("link (select & set link_text & set title)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+    mace.link("https://github.com/ww24/mace", "mace", "title");
+    expect(mace.value).to.equal("This is a [mace](https://github.com/ww24/mace \"title\").");
+  });
+
+  it("link (select & set link_text & set title & image)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+    mace.link("https://github.com/ww24/mace", "mace", "title", true);
+    expect(mace.value).to.equal("This is a ![mace](https://github.com/ww24/mace \"title\").");
   });
 });

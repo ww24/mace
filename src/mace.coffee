@@ -34,20 +34,13 @@ class Mace
       @ace.on "change", => @_render()
 
     # mace.value => String
-    Object.defineProperty Mace::, "value",
+    Object.defineProperty @, "value",
       get: -> @ace.getValue()
 
     # mace.font_size => Number
-    Object.defineProperty Mace::, "font_size",
+    Object.defineProperty @, "font_size",
       get: -> @ace.getFontSize()
-      set: (size) -> @ace.setFontSize(size)
-
-    # DOM binding
-    if btn = options.button
-      Object.keys(Mace::).forEach (prop) ->
-        return if prop.charAt(0) is "_"
-        btn[prop]?.addEventListener "click", ->
-          mace[prop].apply mace, @.dataset.maceArgs?.split ","
+      set: (size) -> @ace.setFontSize size
 
   _render: () ->
     markdown = @ace.getValue()
@@ -66,16 +59,55 @@ class Mace
     @ace.focus()
 
   heading: (count = 1) ->
+    # check range
+    if count < 0 || count > 6
+      throw new RangeError
+
+    # curser position
     pos = @ace.getCursorPosition()
-    @ace.navigateLineStart()
-    @ace.insert "#" for i in [0...count]
+
+    # get selection range
+    range = @ace.selection.getRange()
+    @ace.selection.clearSelection()
+    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+    row_length = range.end.row - range.start.row
+
+    # get Ace Range constructor
+    Range = range.constructor;
+
+    # get heading level and set it
+    for row in [range.start.row..range.end.row]
+      # create selection
+      @ace.moveCursorTo row, 0
+      # get EOL column
+      @ace.navigateLineEnd()
+      p = @ace.getCursorPosition()
+      # create range of current line
+      @ace.selection.addRange new Range p.row, 0, p.row, p.column
+      # get text
+      text = @ace.getCopyText()
+      @ace.selection.clearSelection()
+      @ace.moveCursorTo row, 0
+
+      # detect heading level
+      level = text.match(/^#+/i)?[0].length or 0
+      # adjust heading level
+      continue if level is count
+      for lv in [level...count]
+        if level < count
+          @ace.insert "#"
+        else
+          @ace.remove "right"
+
     @ace.moveCursorTo pos.row, pos.column + count
     @ace.focus()
 
-  link: (href = "./", link_text) ->
+  link: (href = "./", link_text, title = "", is_image = false) ->
     selected_text = @ace.getCopyText().split("\n").join("")
     link_text = link_text or selected_text or "link"
-    @ace.insert "[#{link_text}](#{href})"
+    title = " \"#{title}\"" if title.length > 0
+    image = ["", "!"][+ is_image]
+    @ace.insert "#{image}[#{link_text}](#{href}#{title})"
     @ace.focus()
 
   clear: (force = false) ->
