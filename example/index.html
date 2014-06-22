@@ -2,7 +2,8 @@
 <html>
 <head>
   <title>Mace Editor</title>
-  <link rel="stylesheet" href="../build/mace.css">
+  <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
+  <link rel="stylesheet" href="vendor/css/github-markdown.css">
   <style>
     body {
       position: absolute;
@@ -58,6 +59,20 @@
         <div id="outdent" class="btn btn-default">
           <span class="glyphicon glyphicon-indent-right"></span>
         </div>
+        <div id="heading" class="btn-group btn-group-sm">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Heading
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#">h1</a></li>
+            <li><a href="#">h2</a></li>
+            <li><a href="#">h3</a></li>
+            <li><a href="#">h4</a></li>
+            <li><a href="#">h5</a></li>
+            <li><a href="#">h6</a></li>
+          </ul>
+        </div>
         <div id="save" class="btn btn-default">
           <span class="glyphicon glyphicon-floppy-disk"></span>
         </div>
@@ -72,21 +87,30 @@ Mace = Markdown editor powered by Ace.
     </div>
   </div>
   <div id="preview" class="preview markdown-body"></div>
+  <script src="vendor/js/jquery.min.js"></script>
+  <script src="vendor/js/bootstrap.min.js"></script>
   <script src="../build/mace.min.js"></script>
   <script>
     var mace;
-    addEventListener("load", function () {
-      var editor = document.getElementById("edit-inner"),
-          preview = document.getElementById("preview");
+    $(function () {
+      var editor = $("#edit-inner").get(0),
+          preview = $("#preview").get(0);
 
-      mace = new Mace(editor, preview, {
-        button: {
-          indent: document.getElementById("indent"),
-          outdent: document.getElementById("outdent")
-        }
+      mace = new Mace(editor, preview);
+
+      $("#indent").click(mace.indent.bind(mace));
+      $("#outdent").click(mace.outdent.bind(mace));
+
+      var $heading = $("#heading li");
+      $heading.click(function () {
+        var level = $heading.index(this) + 1;
+        mace.heading(level);
+        // inactivate
+        $(this).parent().click();
+        return false;
       });
 
-      document.getElementById("save").addEventListener("click", function () {
+      $("#save").click(function () {
         console.log(mace.value);
         alert("markdown を console に出力しました。");
       });

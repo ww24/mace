@@ -11,7 +11,7 @@
 
   Mace = (function() {
     function Mace(editor, preview, options) {
-      var btn, mace;
+      var mace;
       this.editor = editor;
       this.preview = preview != null ? preview : null;
       if (options == null) {
@@ -39,12 +39,12 @@
           };
         })(this));
       }
-      Object.defineProperty(Mace.prototype, "value", {
+      Object.defineProperty(this, "value", {
         get: function() {
           return this.ace.getValue();
         }
       });
-      Object.defineProperty(Mace.prototype, "font_size", {
+      Object.defineProperty(this, "font_size", {
         get: function() {
           return this.ace.getFontSize();
         },
@@ -52,18 +52,6 @@
           return this.ace.setFontSize(size);
         }
       });
-      if (btn = options.button) {
-        Object.keys(Mace.prototype).forEach(function(prop) {
-          var _ref;
-          if (prop.charAt(0) === "_") {
-            return;
-          }
-          return (_ref = btn[prop]) != null ? _ref.addEventListener("click", function() {
-            var _ref1;
-            return mace[prop].apply(mace, (_ref1 = this.dataset.maceArgs) != null ? _ref1.split(",") : void 0);
-          }) : void 0;
-        });
-      }
     }
 
     Mace.prototype._render = function() {
@@ -102,27 +90,63 @@
     };
 
     Mace.prototype.heading = function(count) {
-      var i, pos, _i;
+      var Range, level, lv, p, pos, range, row, row_length, text, _i, _j, _ref, _ref1, _ref2;
       if (count == null) {
         count = 1;
       }
+      if (count < 0 || count > 6) {
+        throw new RangeError;
+      }
       pos = this.ace.getCursorPosition();
-      this.ace.navigateLineStart();
-      for (i = _i = 0; 0 <= count ? _i < count : _i > count; i = 0 <= count ? ++_i : --_i) {
-        this.ace.insert("#");
+      range = this.ace.selection.getRange();
+      this.ace.selection.clearSelection();
+      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
+        range.end.row--;
+      }
+      row_length = range.end.row - range.start.row;
+      Range = range.constructor;
+      for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
+        this.ace.moveCursorTo(row, 0);
+        this.ace.navigateLineEnd();
+        p = this.ace.getCursorPosition();
+        this.ace.selection.addRange(new Range(p.row, 0, p.row, p.column));
+        text = this.ace.getCopyText();
+        this.ace.selection.clearSelection();
+        this.ace.moveCursorTo(row, 0);
+        level = ((_ref2 = text.match(/^#+/i)) != null ? _ref2[0].length : void 0) || 0;
+        if (level === count) {
+          continue;
+        }
+        for (lv = _j = level; level <= count ? _j < count : _j > count; lv = level <= count ? ++_j : --_j) {
+          if (level < count) {
+            this.ace.insert("#");
+          } else {
+            this.ace.remove("right");
+          }
+        }
       }
       this.ace.moveCursorTo(pos.row, pos.column + count);
       return this.ace.focus();
     };
 
-    Mace.prototype.link = function(href, link_text) {
-      var selected_text;
+    Mace.prototype.link = function(href, link_text, title, is_image) {
+      var image, selected_text;
       if (href == null) {
         href = "./";
       }
+      if (title == null) {
+        title = "";
+      }
+      if (is_image == null) {
+        is_image = false;
+      }
       selected_text = this.ace.getCopyText().split("\n").join("");
       link_text = link_text || selected_text || "link";
-      this.ace.insert("[" + link_text + "](" + href + ")");
+      if (title.length > 0) {
+        title = " \"" + title + "\"";
+      }
+      image = ["", "!"][+is_image];
+      this.ace.insert("" + image + "[" + link_text + "](" + href + title + ")");
       return this.ace.focus();
     };
 
