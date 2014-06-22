@@ -8,19 +8,11 @@ var ace_deps = [
   "theme-monokai.js"
 ];
 
-var style_deps = [
-  "github-markdown.less",
-  "bootstrap.less"
-];
-
 var gulp = require("gulp"),
     plug = require("gulp-load-plugins")();
 
 ace_deps = ace_deps.map(function (file) {
   return "ace/build/src-min-noconflict/" + file;
-});
-style_deps = style_deps.map(function (file) {
-  return "src/style/" + file;
 });
 
 gulp.task("clean", function () {
@@ -46,26 +38,16 @@ gulp.task("ace", function () {
 });
 
 gulp.task("marked", function () {
-  return gulp.src("src/vendor/marked.js")
-    .pipe(plug.uglify({preserveComments: "some"}))
+  return gulp.src("node_modules/marked/lib/marked.js")
+    .pipe(plug.uglify({preserveComments: function (node, comment) {
+      // check license comment
+      return !!~ comment.value.indexOf("Licensed");
+    }}))
     .pipe(plug.concat("marked.min.js"))
     .pipe(gulp.dest("build/deps"));
 });
 
-gulp.task("style", function () {
-  return gulp.src(style_deps)
-    .pipe(plug.less())
-    .pipe(plug.minifyCss())
-    .pipe(plug.concat("mace.css"))
-    .pipe(gulp.dest("build"));
-});
-
-gulp.task("fonts", function () {
-  return gulp.src("src/fonts/*")
-    .pipe(gulp.dest("build/fonts"));
-});
-
-gulp.task("concat", ["mace", "ace", "marked", "style", "fonts"], function () {
+gulp.task("concat", ["mace", "ace", "marked"], function () {
   return gulp.src("build/deps/*.min.js")
     .pipe(plug.concat("mace.min.js"))
     .pipe(gulp.dest("build"));
