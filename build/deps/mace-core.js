@@ -11,7 +11,7 @@
 
   Mace = (function() {
     function Mace(editor, preview, options) {
-      var btn, mace;
+      var mace;
       this.editor = editor;
       this.preview = preview != null ? preview : null;
       if (options == null) {
@@ -52,18 +52,6 @@
           return this.ace.setFontSize(size);
         }
       });
-      if (btn = options.button) {
-        Object.keys(Mace.prototype).forEach(function(prop) {
-          var _ref;
-          if (prop.charAt(0) === "_") {
-            return;
-          }
-          return (_ref = btn[prop]) != null ? _ref.addEventListener("click", function() {
-            var _ref1;
-            return mace[prop].apply(mace, (_ref1 = this.dataset.maceArgs) != null ? _ref1.split(",") : void 0);
-          }) : void 0;
-        });
-      }
     }
 
     Mace.prototype._render = function() {

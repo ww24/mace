@@ -40,14 +40,7 @@ class Mace
     # mace.font_size => Number
     Object.defineProperty @, "font_size",
       get: -> @ace.getFontSize()
-      set: (size) -> @ace.setFontSize(size)
-
-    # DOM binding
-    if btn = options.button
-      Object.keys(Mace::).forEach (prop) ->
-        return if prop.charAt(0) is "_"
-        btn[prop]?.addEventListener "click", ->
-          mace[prop].apply mace, @.dataset.maceArgs?.split ","
+      set: (size) -> @ace.setFontSize size
 
   _render: () ->
     markdown = @ace.getValue()
