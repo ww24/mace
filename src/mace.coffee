@@ -66,6 +66,11 @@ class Mace
     @ace.focus()
 
   heading: (count = 1) ->
+    # check range
+    if count < 0 || count > 6
+      throw new RangeError
+
+    # curser position
     pos = @ace.getCursorPosition()
 
     # get selection range

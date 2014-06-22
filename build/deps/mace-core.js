@@ -106,6 +106,9 @@
       if (count == null) {
         count = 1;
       }
+      if (count < 0 || count > 6) {
+        throw new RangeError;
+      }
       pos = this.ace.getCursorPosition();
       range = this.ace.selection.getRange();
       this.ace.selection.clearSelection();

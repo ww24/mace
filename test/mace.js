@@ -103,6 +103,11 @@ describe("Mace", function () {
     expect(mace.value).to.equal("###Mace\n###Mace = Markdown editor powered by Ace.\n###\n");
   });
 
+  it("heading (range check)", function () {
+    expect(mace.heading.bind(mace, -1)).to.throw(RangeError);
+    expect(mace.heading.bind(mace, 7)).to.throw(RangeError);
+  });
+
   it("link (empty)", function () {
     mace.link();
     expect(mace.value).to.equal("[link](./)");
