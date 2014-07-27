@@ -125,7 +125,7 @@
           }
         }
       }
-      this.ace.moveCursorTo(pos.row, pos.column + count);
+      this.ace.moveCursorTo(pos.row, pos.column + count - level);
       return this.ace.focus();
     };
 

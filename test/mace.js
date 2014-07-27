@@ -69,20 +69,26 @@ describe("Mace", function () {
 
   it("heading", function () {
     mace.ace.insert("Mace");
+    mace.ace.moveCursorTo(0, 0);
     mace.heading();
     expect(mace.value).to.equal("#Mace");
+    expect(mace.ace.getCursorPosition().column).to.equal(1);
   });
 
   it("heading (level up 1 -> 2)", function () {
     mace.ace.insert("#Mace");
+    mace.ace.moveCursorTo(0, 1);
     mace.heading(2);
     expect(mace.value).to.equal("##Mace");
+    expect(mace.ace.getCursorPosition().column).to.equal(2);
   });
 
   it("heading (level down 2 -> 1)", function () {
     mace.ace.insert("##Mace");
+    mace.ace.moveCursorTo(0, 2);
     mace.heading(1);
     expect(mace.value).to.equal("#Mace");
+    expect(mace.ace.getCursorPosition().column).to.equal(1);
   });
 
   it("heading (select a line)", function () {

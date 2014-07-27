@@ -99,7 +99,7 @@ class Mace
         else
           @ace.remove "right"
 
-    @ace.moveCursorTo pos.row, pos.column + count
+    @ace.moveCursorTo pos.row, pos.column + count - level
     @ace.focus()
 
   link: (href = "./", link_text, title = "", is_image = false) ->
