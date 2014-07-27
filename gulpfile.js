@@ -17,7 +17,7 @@ ace_deps = ace_deps.map(function (file) {
 
 gulp.task("clean", function () {
   return gulp.src(["build", "coverage"], {read: false})
-    .pipe(plug.clean());
+    .pipe(plug.rimraf());
 });
 
 gulp.task("mace", function () {
