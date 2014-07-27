@@ -98,8 +98,8 @@ Mace = Markdown editor powered by Ace.
 
       mace = new Mace(editor, preview);
 
-      $("#indent").click(mace.indent.bind(mace));
-      $("#outdent").click(mace.outdent.bind(mace));
+      $("#indent").click(mace.indent.bind(mace, 1));
+      $("#outdent").click(mace.outdent.bind(mace, 1));
 
       var $heading = $("#heading li");
       $heading.click(function () {
