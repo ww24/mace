@@ -144,11 +144,9 @@ class Mace
         @ace.moveCursorTo row, indent_size
         # detect space
         space_size = match?[2].length
-        ###
-        # remove_method_だと一文字ずつ消せない
-        # @大問題
-        ###
-        @ace.remove "right" for i in [0..space_size]
+        # 範囲選択後に削除
+        @ace.selection.addRange new @Ace.Range row, 0, row, space_size + 1
+        @ace.remove "right"
       else
         @ace.insert "#{mark} "
 

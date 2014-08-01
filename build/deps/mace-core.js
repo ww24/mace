@@ -161,7 +161,7 @@
     };
 
     Mace.prototype.list = function(mark) {
-      var i, indent_size, isList, match, pos, range, row, space_size, text, _i, _j, _ref, _ref1;
+      var indent_size, isList, match, pos, range, row, space_size, text, _i, _ref, _ref1;
       if (mark == null) {
         mark = "-";
       }
@@ -180,14 +180,8 @@
           indent_size = match != null ? match[1].length : void 0;
           this.ace.moveCursorTo(row, indent_size);
           space_size = match != null ? match[2].length : void 0;
-
-          /*
-           * @remove_method_だと一文字ずつ消せない
-           * @大問題
-           */
-          for (i = _j = 0; 0 <= space_size ? _j <= space_size : _j >= space_size; i = 0 <= space_size ? ++_j : --_j) {
-            this.ace.remove("right");
-          }
+          this.ace.selection.addRange(new this.Ace.Range(row, 0, row, space_size + 1));
+          this.ace.remove("right");
         } else {
           this.ace.insert("" + mark + " ");
         }
