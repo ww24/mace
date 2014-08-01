@@ -154,4 +154,16 @@ describe("Mace", function () {
     mace.link("https://github.com/ww24/mace", "mace", "title", true);
     expect(mace.value).to.equal("This is a ![mace](https://github.com/ww24/mace \"title\").");
   });
+
+  it("getLineText", function () {
+    mace.ace.insert("This is a editor.");
+    var text = mace.getLineText();
+    expect("This is a editor.");
+  });
+
+  it.skip("list", function () {
+    mace.ace.insert("list item 1");
+    mace.list();
+    expect(mace.value).to.equal("* ");
+  });
 });

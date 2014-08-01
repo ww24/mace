@@ -18,6 +18,9 @@
         options = {};
       }
       mace = this;
+      this.Ace = {
+        Range: ace.require("ace/range").Range
+      };
       this.ace = ace.edit(this.editor);
       this.ace.getSession().setMode("ace/mode/markdown");
       this.ace.setTheme("ace/theme/monokai");
@@ -90,7 +93,7 @@
     };
 
     Mace.prototype.heading = function(count) {
-      var Range, level, lv, p, pos, range, row, row_length, text, _i, _j, _ref, _ref1, _ref2;
+      var level, lv, pos, range, row, text, _i, _j, _ref, _ref1, _ref2;
       if (count == null) {
         count = 1;
       }
@@ -103,16 +106,9 @@
       if (range.end.column === 0 && range.end.row - range.start.row === 1) {
         range.end.row--;
       }
-      row_length = range.end.row - range.start.row;
-      Range = range.constructor;
       for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
         this.ace.moveCursorTo(row, 0);
-        this.ace.navigateLineEnd();
-        p = this.ace.getCursorPosition();
-        this.ace.selection.addRange(new Range(p.row, 0, p.row, p.column));
-        text = this.ace.getCopyText();
-        this.ace.selection.clearSelection();
-        this.ace.moveCursorTo(row, 0);
+        text = this.getLineText(row);
         level = ((_ref2 = text.match(/^#+/i)) != null ? _ref2[0].length : void 0) || 0;
         if (level === count) {
           continue;
@@ -147,6 +143,56 @@
       }
       image = ["", "!"][+is_image];
       this.ace.insert("" + image + "[" + link_text + "](" + href + title + ")");
+      return this.ace.focus();
+    };
+
+    Mace.prototype.getLineText = function(row) {
+      var p, pos, text;
+      pos = this.ace.getCursorPosition();
+      row = row || pos.row;
+      this.ace.moveCursorTo(row, 0);
+      this.ace.navigateLineEnd();
+      p = this.ace.getCursorPosition();
+      this.ace.selection.addRange(new this.Ace.Range(p.row, 0, p.row, p.column));
+      text = this.ace.getCopyText();
+      this.ace.selection.clearSelection();
+      this.ace.moveCursorTo(pos.row, pos.column);
+      return text;
+    };
+
+    Mace.prototype.list = function(mark) {
+      var i, indent_size, isList, match, pos, range, row, space_size, text, _i, _j, _ref, _ref1;
+      if (mark == null) {
+        mark = "-";
+      }
+      pos = this.ace.getCursorPosition();
+      range = this.ace.selection.getRange();
+      this.ace.selection.clearSelection();
+      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
+        range.end.row--;
+      }
+      for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
+        this.ace.moveCursorTo(row, 0);
+        text = this.getLineText(row);
+        match = text.match(/^(\s*)[*-](\s*)[^*-][^]+/i);
+        isList = match !== null;
+        if (isList) {
+          indent_size = match != null ? match[1].length : void 0;
+          this.ace.moveCursorTo(row, indent_size);
+          space_size = match != null ? match[2].length : void 0;
+
+          /*
+           * @remove_method_だと一文字ずつ消せない
+           * @大問題
+           */
+          for (i = _j = 0; 0 <= space_size ? _j <= space_size : _j >= space_size; i = 0 <= space_size ? ++_j : --_j) {
+            this.ace.remove("right");
+          }
+        } else {
+          this.ace.insert("" + mark + " ");
+        }
+      }
+      this.ace.moveCursorTo(pos.row, pos.column + 2);
       return this.ace.focus();
     };
 
