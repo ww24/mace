@@ -11,6 +11,10 @@ class Mace
   constructor: (@editor, @preview = null, options = {}) ->
     mace = @
 
+    ## Ace Constructors
+    @Ace =
+      Range: ace.require("ace/range").Range
+
     ## ace settings
     @ace = ace.edit @editor
     @ace.getSession().setMode "ace/mode/markdown"
@@ -70,24 +74,12 @@ class Mace
     range = @ace.selection.getRange()
     @ace.selection.clearSelection()
     range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
-    row_length = range.end.row - range.start.row
-
-    # get Ace Range constructor
-    Range = range.constructor;
 
     # get heading level and set it
     for row in [range.start.row..range.end.row]
-      # create selection
       @ace.moveCursorTo row, 0
-      # get EOL column
-      @ace.navigateLineEnd()
-      p = @ace.getCursorPosition()
-      # create range of current line
-      @ace.selection.addRange new Range p.row, 0, p.row, p.column
-      # get text
-      text = @ace.getCopyText()
-      @ace.selection.clearSelection()
-      @ace.moveCursorTo row, 0
+      # get line text
+      text = @getLineText row
 
       # detect heading level
       level = text.match(/^#+/i)?[0].length or 0
@@ -108,6 +100,57 @@ class Mace
     title = " \"#{title}\"" if title.length > 0
     image = ["", "!"][+ is_image]
     @ace.insert "#{image}[#{link_text}](#{href}#{title})"
+    @ace.focus()
+
+  getLineText: (row) ->
+    pos = @ace.getCursorPosition()
+    row = row or pos.row
+    # create selection
+    @ace.moveCursorTo row, 0
+    # get EOL column
+    @ace.navigateLineEnd()
+    p = @ace.getCursorPosition()
+    # create range of current line
+    @ace.selection.addRange new @Ace.Range p.row, 0, p.row, p.column
+    # get text
+    text = @ace.getCopyText()
+    @ace.selection.clearSelection()
+    # reset cursor position
+    @ace.moveCursorTo pos.row, pos.column
+    return text
+
+  list: (mark = "-") ->
+    # curser position
+    pos = @ace.getCursorPosition()
+
+    # get selection range
+    range = @ace.selection.getRange()
+    @ace.selection.clearSelection()
+    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+
+    # get heading level and set it
+    for row in [range.start.row..range.end.row]
+      @ace.moveCursorTo row, 0
+      # get line text
+      text = @getLineText row
+
+      match = text.match /^(\s*)[*-](\s*)[^*-][^]+/i
+      # detect list
+      isList = match isnt null
+      # set list
+      if isList
+        # detect indent size
+        indent_size = match?[1].length
+        @ace.moveCursorTo row, indent_size
+        # detect space
+        space_size = match?[2].length
+        # 範囲選択後に削除
+        @ace.selection.addRange new @Ace.Range row, 0, row, space_size + 1
+        @ace.remove "right"
+      else
+        @ace.insert "#{mark} "
+
+    @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()
 
   clear: (force = false) ->
