@@ -35,7 +35,7 @@ Coverage
 
 License
 -------
-MIT
+[MIT](LICENSE)
 
 [travis-url]: https://travis-ci.org/ww24/mace
 [travis-img]: https://img.shields.io/travis/ww24/mace.svg?branch=master&style=flat
