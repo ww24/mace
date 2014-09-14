@@ -158,7 +158,7 @@ describe("Mace", function () {
   it("getLineText", function () {
     mace.ace.insert("This is a editor.");
     var text = mace.getLineText();
-    expect("This is a editor.");
+    expect(text).to.equal("This is a editor.");
   });
 
   it("#list", function () {
