@@ -70,6 +70,16 @@
       })(this));
     };
 
+    Mace.prototype._getCurrentRage = function() {
+      var range;
+      range = this.ace.selection.getRange();
+      this.ace.selection.clearSelection();
+      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
+        range.end.row--;
+      }
+      return range;
+    };
+
     Mace.prototype.indent = function(count) {
       var i, _i;
       if (count == null) {
@@ -101,11 +111,7 @@
         throw new RangeError;
       }
       pos = this.ace.getCursorPosition();
-      range = this.ace.selection.getRange();
-      this.ace.selection.clearSelection();
-      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
-        range.end.row--;
-      }
+      range = this._getCurrentRage();
       for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
         this.ace.moveCursorTo(row, 0);
         text = this.getLineText(row);
@@ -166,11 +172,7 @@
         mark = "-";
       }
       pos = this.ace.getCursorPosition();
-      range = this.ace.selection.getRange();
-      this.ace.selection.clearSelection();
-      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
-        range.end.row--;
-      }
+      range = this._getCurrentRage();
       for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
         this.ace.moveCursorTo(row, 0);
         text = this.getLineText(row);
@@ -188,6 +190,14 @@
       }
       this.ace.moveCursorTo(pos.row, pos.column + 2);
       return this.ace.focus();
+    };
+
+    Mace.prototype.code = function() {
+      var pos, range;
+      pos = this.ace.getCursorPosition();
+      range = this._getCurrentRage();
+      this.ace.insert("```\n\n```");
+      return this.ace.moveCursorTo(pos.row + 1, 0);
     };
 
     Mace.prototype.clear = function(force) {

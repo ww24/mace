@@ -54,6 +54,13 @@ class Mace
       ## update html preview
       @preview.innerHTML = html
 
+  _getCurrentRage: () ->
+    # get selection range
+    range = @ace.selection.getRange()
+    @ace.selection.clearSelection()
+    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+    return range
+
   indent: (count = 1) ->
     @ace.indent() for i in [0...count]
     @ace.focus()
@@ -70,10 +77,7 @@ class Mace
     # curser position
     pos = @ace.getCursorPosition()
 
-    # get selection range
-    range = @ace.selection.getRange()
-    @ace.selection.clearSelection()
-    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+    range = @_getCurrentRage()
 
     # get heading level and set it
     for row in [range.start.row..range.end.row]
@@ -123,10 +127,7 @@ class Mace
     # curser position
     pos = @ace.getCursorPosition()
 
-    # get selection range
-    range = @ace.selection.getRange()
-    @ace.selection.clearSelection()
-    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+    range = @_getCurrentRage()
 
     # get heading level and set it
     for row in [range.start.row..range.end.row]
@@ -152,6 +153,15 @@ class Mace
 
     @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()
+
+  code: () ->
+    # curser position
+    pos = @ace.getCursorPosition()
+
+    range = @_getCurrentRage()
+
+    @ace.insert "```\n\n```"
+    @ace.moveCursorTo pos.row + 1, 0
 
   clear: (force = false) ->
     if force

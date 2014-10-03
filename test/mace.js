@@ -196,4 +196,32 @@ describe("Mace", function () {
     mace.list();
     expect(mace.value).to.equal("list item 1\nlist item 2");
   });
+
+  it("#code", function () {
+    mace.code();
+    expect(mace.value).to.equal("```\n\n```");
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(1);
+    expect(pos.column).to.equal(0);
+  });
+
+  it.skip("#code selection", function () {
+    mace.ace.insert("console.log(\"test\");");
+    mace.code();
+    expect(mace.value).to.equal("`console.log(\"test\");`");
+    expect(mace.ace.getCursorPosition().column).to.equal(22);
+  });
+
+  it.skip("#code multi lines", function () {
+    mace.ace.insert("function () {\nconsole.log(\"test\");\n}\n");
+    var range = new Ace.Range(0, 0, 3, 1);
+    mace.ace.moveCursorTo(0, 0);
+    mace.ace.selection.addRange(range);
+    mace.code();
+    expect(mace.value).to.equal("```\nfunction () {\nconsole.log(\"test\");\n}\n```\n");
+  });
+
+  it.skip("#code set language", function () {
+
+  });
 });
