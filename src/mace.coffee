@@ -123,33 +123,37 @@ class Mace
     @ace.moveCursorTo pos.row, pos.column
     return text
 
-  list: (mark = "-") ->
+  list: (mark = "-", items = []) ->
     # curser position
     pos = @ace.getCursorPosition()
 
     range = @_getCurrentRage()
 
-    # get heading level and set it
-    for row in [range.start.row..range.end.row]
-      @ace.moveCursorTo row, 0
-      # get line text
-      text = @getLineText row
+    if items.length > 0
+      # init items mode
+      @ace.insert items.map((item) -> "#{mark} #{item}").join("\n") + "\n"
+    else
+      # get heading level and set it
+      for row in [range.start.row..range.end.row]
+        @ace.moveCursorTo row, 0
+        # get line text
+        text = @getLineText row
 
-      match = text.match /^(\s*)[*-](\s*)[^*-][^]+/i
-      # detect list
-      isList = match isnt null
-      # set list
-      if isList
-        # detect indent size
-        indent_size = match?[1].length
-        @ace.moveCursorTo row, indent_size
-        # detect space
-        space_size = match?[2].length
-        # 範囲選択後に削除
-        @ace.selection.addRange new @Ace.Range row, 0, row, space_size + 1
-        @ace.remove "right"
-      else
-        @ace.insert "#{mark} "
+        match = text.match /^(\s*)[*-](\s*)[^*-][^]+/i
+        # detect list
+        isList = match isnt null
+        # set list
+        if isList
+          # detect indent size
+          indent_size = match?[1].length
+          @ace.moveCursorTo row, indent_size
+          # detect space
+          space_size = match?[2].length
+          # 範囲選択後に削除
+          @ace.selection.addRange new @Ace.Range row, 0, row, space_size + 1
+          @ace.remove "right"
+        else
+          @ace.insert "#{mark} "
 
     @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()

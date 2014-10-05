@@ -197,6 +197,12 @@ describe("Mace", function () {
     expect(mace.value).to.equal("list item 1\nlist item 2");
   });
 
+  it("#list set initial items", function () {
+    mace.list("*", ["item 1", "item 2", "item 3"]);
+
+    expect(mace.value).to.equal("* item 1\n* item 2\n* item 3\n");
+  });
+
   it("#code", function () {
     mace.code();
     expect(mace.value).to.equal("```\n\n```\n");
