@@ -9,15 +9,15 @@ var ace_deps = [
 ];
 
 var gulp = require("gulp"),
-    plug = require("gulp-load-plugins")();
+    plug = require("gulp-load-plugins")(),
+    del = require("del");
 
 ace_deps = ace_deps.map(function (file) {
   return "ace/build/src-min-noconflict/" + file;
 });
 
-gulp.task("clean", function () {
-  return gulp.src(["build/*", "coverage/*"], {read: false})
-    .pipe(plug.rimraf({force: true}));
+gulp.task("clean", function (done) {
+  del(["build/*", "coverage/*"], done);
 });
 
 gulp.task("mace", function () {
@@ -53,4 +53,6 @@ gulp.task("concat", ["mace", "ace", "marked"], function () {
     .pipe(gulp.dest("build"));
 });
 
-gulp.task("default", ["clean", "concat"]);
+gulp.task("default", ["clean"], function () {
+  gulp.start("concat");
+});

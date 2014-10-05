@@ -197,9 +197,15 @@ describe("Mace", function () {
     expect(mace.value).to.equal("list item 1\nlist item 2");
   });
 
+  it("#list set initial items", function () {
+    mace.list("*", ["item 1", "item 2", "item 3"]);
+
+    expect(mace.value).to.equal("* item 1\n* item 2\n* item 3\n");
+  });
+
   it("#code", function () {
     mace.code();
-    expect(mace.value).to.equal("```\n\n```");
+    expect(mace.value).to.equal("```\n\n```\n");
     var pos = mace.ace.getCursorPosition();
     expect(pos.row).to.equal(1);
     expect(pos.column).to.equal(0);
@@ -238,7 +244,17 @@ describe("Mace", function () {
     mace.ace.moveCursorTo(0, 0);
     mace.ace.selection.addRange(range);
 
-    mace.code("js");
+    mace.code(null, "js");
+
+    expect(mace.value).to.equal("```js\nfunction () {\n  console.log(\"test\");\n}\n```\n");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(5);
+    expect(pos.column).to.equal(0);
+  });
+
+  it("#code insert code block", function () {
+    mace.code("function () {\n  console.log(\"test\");\n}", "js");
 
     expect(mace.value).to.equal("```js\nfunction () {\n  console.log(\"test\");\n}\n```\n");
 
