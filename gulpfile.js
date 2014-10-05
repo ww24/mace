@@ -53,4 +53,6 @@ gulp.task("concat", ["mace", "ace", "marked"], function () {
     .pipe(gulp.dest("build"));
 });
 
-gulp.task("default", ["clean", "concat"]);
+gulp.task("default", ["clean"], function () {
+  gulp.start("concat");
+});
