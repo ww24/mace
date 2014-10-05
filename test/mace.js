@@ -158,7 +158,7 @@ describe("Mace", function () {
   it("getLineText", function () {
     mace.ace.insert("This is a editor.");
     var text = mace.getLineText();
-    expect("This is a editor.");
+    expect(text).to.equal("This is a editor.");
   });
 
   it("#list", function () {
@@ -195,5 +195,55 @@ describe("Mace", function () {
     mace.ace.selection.addRange(range);
     mace.list();
     expect(mace.value).to.equal("list item 1\nlist item 2");
+  });
+
+  it("#code", function () {
+    mace.code();
+    expect(mace.value).to.equal("```\n\n```");
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(1);
+    expect(pos.column).to.equal(0);
+  });
+
+  it("#code selection", function () {
+    mace.ace.insert("1. console.log(\"test\"); is debug message.");
+    var range = new Ace.Range(0, 3, 0, 23);
+    mace.ace.moveCursorTo(0, 3);
+    mace.ace.selection.addRange(range);
+
+    mace.code();
+
+    expect(mace.value).to.equal("1. `console.log(\"test\");` is debug message.");
+    expect(mace.ace.getCursorPosition().column).to.equal(25);
+  });
+
+  it("#code multi lines", function () {
+    mace.ace.insert("function () {\n  console.log(\"test\");\n}\n");
+    var range = new Ace.Range(0, 0, 3, 0);
+    mace.ace.moveCursorTo(0, 0);
+    mace.ace.selection.addRange(range);
+
+    mace.code();
+
+    expect(mace.value).to.equal("```\nfunction () {\n  console.log(\"test\");\n}\n```\n");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(5);
+    expect(pos.column).to.equal(0);
+  });
+
+  it.skip("#code set language", function () {
+    mace.ace.insert("function () {\n  console.log(\"test\");\n}\n");
+    var range = new Ace.Range(0, 0, 3, 0);
+    mace.ace.moveCursorTo(0, 0);
+    mace.ace.selection.addRange(range);
+
+    mace.code("js");
+
+    expect(mace.value).to.equal("```js\nfunction () {\n  console.log(\"test\");\n}\n```\n");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(5);
+    expect(pos.column).to.equal(0);
   });
 });

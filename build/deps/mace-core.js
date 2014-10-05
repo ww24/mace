@@ -70,6 +70,16 @@
       })(this));
     };
 
+    Mace.prototype._getCurrentRage = function() {
+      var range;
+      range = this.ace.selection.getRange();
+      this.ace.selection.clearSelection();
+      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
+        range.end.row--;
+      }
+      return range;
+    };
+
     Mace.prototype.indent = function(count) {
       var i, _i;
       if (count == null) {
@@ -101,11 +111,7 @@
         throw new RangeError;
       }
       pos = this.ace.getCursorPosition();
-      range = this.ace.selection.getRange();
-      this.ace.selection.clearSelection();
-      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
-        range.end.row--;
-      }
+      range = this._getCurrentRage();
       for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
         this.ace.moveCursorTo(row, 0);
         text = this.getLineText(row);
@@ -166,11 +172,7 @@
         mark = "-";
       }
       pos = this.ace.getCursorPosition();
-      range = this.ace.selection.getRange();
-      this.ace.selection.clearSelection();
-      if (range.end.column === 0 && range.end.row - range.start.row === 1) {
-        range.end.row--;
-      }
+      range = this._getCurrentRage();
       for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
         this.ace.moveCursorTo(row, 0);
         text = this.getLineText(row);
@@ -187,6 +189,38 @@
         }
       }
       this.ace.moveCursorTo(pos.row, pos.column + 2);
+      return this.ace.focus();
+    };
+
+    Mace.prototype.code = function(lang) {
+      var offset, pos, range, selected_text;
+      if (lang == null) {
+        lang = "";
+      }
+      pos = this.ace.getCursorPosition();
+      selected_text = this.ace.getCopyText();
+      if (~selected_text.indexOf("\n")) {
+        range = this._getCurrentRage();
+        offset = 1;
+        this.ace.moveCursorTo(range.start.row, range.start.column);
+        this.ace.insert("```" + lang + "\n");
+        this.ace.moveCursorTo(range.end.row + offset, range.end.column);
+        if (range.end.column !== 0) {
+          this.ace.insert("\n");
+          offset++;
+        }
+        this.ace.insert("```\n");
+        this.ace.moveCursorTo(range.end.row + offset + 1, 0);
+      } else {
+        selected_text = selected_text.split("\n").join("");
+        if (selected_text) {
+          this.ace.remove("right");
+          this.ace.insert("`" + selected_text + "`");
+        } else {
+          this.ace.insert("```\n\n```");
+          this.ace.moveCursorTo(pos.row + 1, 0);
+        }
+      }
       return this.ace.focus();
     };
 

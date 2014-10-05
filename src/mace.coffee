@@ -54,6 +54,13 @@ class Mace
       ## update html preview
       @preview.innerHTML = html
 
+  _getCurrentRage: () ->
+    # get selection range
+    range = @ace.selection.getRange()
+    @ace.selection.clearSelection()
+    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+    return range
+
   indent: (count = 1) ->
     @ace.indent() for i in [0...count]
     @ace.focus()
@@ -70,10 +77,7 @@ class Mace
     # curser position
     pos = @ace.getCursorPosition()
 
-    # get selection range
-    range = @ace.selection.getRange()
-    @ace.selection.clearSelection()
-    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+    range = @_getCurrentRage()
 
     # get heading level and set it
     for row in [range.start.row..range.end.row]
@@ -123,10 +127,7 @@ class Mace
     # curser position
     pos = @ace.getCursorPosition()
 
-    # get selection range
-    range = @ace.selection.getRange()
-    @ace.selection.clearSelection()
-    range.end.row-- if range.end.column is 0 and range.end.row - range.start.row is 1
+    range = @_getCurrentRage()
 
     # get heading level and set it
     for row in [range.start.row..range.end.row]
@@ -153,10 +154,39 @@ class Mace
     @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()
 
+  code: (lang = "") ->
+    # curser position
+    pos = @ace.getCursorPosition()
+
+    selected_text = @ace.getCopyText()
+
+    # check multi lines
+    if ~ selected_text.indexOf("\n")
+      range = @_getCurrentRage()
+      offset = 1
+      @ace.moveCursorTo range.start.row, range.start.column
+      @ace.insert "```#{lang}\n"
+      @ace.moveCursorTo range.end.row + offset, range.end.column
+      if range.end.column isnt 0
+        @ace.insert "\n"
+        offset++
+      @ace.insert "```\n"
+      @ace.moveCursorTo range.end.row + offset + 1, 0
+    else
+      selected_text = selected_text.split("\n").join("")
+      if selected_text
+        @ace.remove "right"
+        @ace.insert "`#{selected_text}`"
+      else
+        @ace.insert "```\n\n```"
+        @ace.moveCursorTo pos.row + 1, 0
+
+    @ace.focus()
+
   clear: (force = false) ->
     if force
       @ace.setValue ""
     else
       @ace.removeLines()
 
-this.Mace = Mace;
+this.Mace = Mace
