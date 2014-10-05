@@ -199,7 +199,7 @@ describe("Mace", function () {
 
   it("#code", function () {
     mace.code();
-    expect(mace.value).to.equal("```\n\n```");
+    expect(mace.value).to.equal("```\n\n```\n");
     var pos = mace.ace.getCursorPosition();
     expect(pos.row).to.equal(1);
     expect(pos.column).to.equal(0);
@@ -238,7 +238,17 @@ describe("Mace", function () {
     mace.ace.moveCursorTo(0, 0);
     mace.ace.selection.addRange(range);
 
-    mace.code("js");
+    mace.code(null, "js");
+
+    expect(mace.value).to.equal("```js\nfunction () {\n  console.log(\"test\");\n}\n```\n");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(5);
+    expect(pos.column).to.equal(0);
+  });
+
+  it("#code insert code block", function () {
+    mace.code("function () {\n  console.log(\"test\");\n}", "js");
 
     expect(mace.value).to.equal("```js\nfunction () {\n  console.log(\"test\");\n}\n```\n");
 

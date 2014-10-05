@@ -192,8 +192,11 @@
       return this.ace.focus();
     };
 
-    Mace.prototype.code = function(lang) {
+    Mace.prototype.code = function(code, lang) {
       var offset, pos, range, selected_text;
+      if (code == null) {
+        code = "";
+      }
       if (lang == null) {
         lang = "";
       }
@@ -217,8 +220,12 @@
           this.ace.remove("right");
           this.ace.insert("`" + selected_text + "`");
         } else {
-          this.ace.insert("```\n\n```");
-          this.ace.moveCursorTo(pos.row + 1, 0);
+          this.ace.insert("```" + lang + "\n" + code + "\n```\n");
+          if (!code) {
+            this.ace.moveCursorTo(pos.row + 1, 0);
+          } else {
+            this.ace.moveCursorTo(pos.row + code.split("\n").length + 3, 0);
+          }
         }
       }
       return this.ace.focus();

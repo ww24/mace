@@ -154,7 +154,7 @@ class Mace
     @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()
 
-  code: (lang = "") ->
+  code: (code = "", lang = "") ->
     # curser position
     pos = @ace.getCursorPosition()
 
@@ -162,6 +162,7 @@ class Mace
 
     # check multi lines
     if ~ selected_text.indexOf("\n")
+      # multi line code insert mode
       range = @_getCurrentRage()
       offset = 1
       @ace.moveCursorTo range.start.row, range.start.column
@@ -175,11 +176,16 @@ class Mace
     else
       selected_text = selected_text.split("\n").join("")
       if selected_text
+        # single line code insert mode
         @ace.remove "right"
         @ace.insert "`#{selected_text}`"
       else
-        @ace.insert "```\n\n```"
-        @ace.moveCursorTo pos.row + 1, 0
+        # code insert from code argument mode
+        @ace.insert "```#{lang}\n#{code}\n```\n"
+        unless code
+          @ace.moveCursorTo pos.row + 1, 0
+        else
+          @ace.moveCursorTo pos.row + code.split("\n").length + 3, 0
 
     @ace.focus()
 
