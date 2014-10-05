@@ -176,7 +176,7 @@
       }
       pos = this.ace.getCursorPosition();
       range = this._getCurrentRage();
-      if (items.length > 0) {
+      if (range.start.row === range.end.row && items.length > 0) {
         this.ace.insert(items.map(function(item) {
           return "" + mark + " " + item;
         }).join("\n") + "\n");
