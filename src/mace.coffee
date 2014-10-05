@@ -154,14 +154,34 @@ class Mace
     @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()
 
-  code: () ->
+  code: (lang = "") ->
     # curser position
     pos = @ace.getCursorPosition()
 
-    range = @_getCurrentRage()
+    selected_text = @ace.getCopyText()
 
-    @ace.insert "```\n\n```"
-    @ace.moveCursorTo pos.row + 1, 0
+    # check multi lines
+    if ~ selected_text.indexOf("\n")
+      range = @_getCurrentRage()
+      offset = 1
+      @ace.moveCursorTo range.start.row, range.start.column
+      @ace.insert "```#{lang}\n"
+      @ace.moveCursorTo range.end.row + offset, range.end.column
+      if range.end.column isnt 0
+        @ace.insert "\n"
+        offset++
+      @ace.insert "```\n"
+      @ace.moveCursorTo range.end.row + offset + 1, 0
+    else
+      selected_text = selected_text.split("\n").join("")
+      if selected_text
+        @ace.remove "right"
+        @ace.insert "`#{selected_text}`"
+      else
+        @ace.insert "```\n\n```"
+        @ace.moveCursorTo pos.row + 1, 0
+
+    @ace.focus()
 
   clear: (force = false) ->
     if force
@@ -169,4 +189,4 @@ class Mace
     else
       @ace.removeLines()
 
-this.Mace = Mace;
+this.Mace = Mace

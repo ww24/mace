@@ -205,23 +205,45 @@ describe("Mace", function () {
     expect(pos.column).to.equal(0);
   });
 
-  it.skip("#code selection", function () {
-    mace.ace.insert("console.log(\"test\");");
+  it("#code selection", function () {
+    mace.ace.insert("1. console.log(\"test\"); is debug message.");
+    var range = new Ace.Range(0, 3, 0, 23);
+    mace.ace.moveCursorTo(0, 3);
+    mace.ace.selection.addRange(range);
+
     mace.code();
-    expect(mace.value).to.equal("`console.log(\"test\");`");
-    expect(mace.ace.getCursorPosition().column).to.equal(22);
+
+    expect(mace.value).to.equal("1. `console.log(\"test\");` is debug message.");
+    expect(mace.ace.getCursorPosition().column).to.equal(25);
   });
 
-  it.skip("#code multi lines", function () {
-    mace.ace.insert("function () {\nconsole.log(\"test\");\n}\n");
-    var range = new Ace.Range(0, 0, 3, 1);
+  it("#code multi lines", function () {
+    mace.ace.insert("function () {\n  console.log(\"test\");\n}\n");
+    var range = new Ace.Range(0, 0, 3, 0);
     mace.ace.moveCursorTo(0, 0);
     mace.ace.selection.addRange(range);
+
     mace.code();
-    expect(mace.value).to.equal("```\nfunction () {\nconsole.log(\"test\");\n}\n```\n");
+
+    expect(mace.value).to.equal("```\nfunction () {\n  console.log(\"test\");\n}\n```\n");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(5);
+    expect(pos.column).to.equal(0);
   });
 
   it.skip("#code set language", function () {
+    mace.ace.insert("function () {\n  console.log(\"test\");\n}\n");
+    var range = new Ace.Range(0, 0, 3, 0);
+    mace.ace.moveCursorTo(0, 0);
+    mace.ace.selection.addRange(range);
 
+    mace.code("js");
+
+    expect(mace.value).to.equal("```js\nfunction () {\n  console.log(\"test\");\n}\n```\n");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(5);
+    expect(pos.column).to.equal(0);
   });
 });
