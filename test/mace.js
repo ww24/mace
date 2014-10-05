@@ -232,9 +232,9 @@ describe("Mace", function () {
     expect(pos.column).to.equal(0);
   });
 
-  it.skip("#code set language", function () {
-    mace.ace.insert("function () {\n  console.log(\"test\");\n}\n");
-    var range = new Ace.Range(0, 0, 3, 0);
+  it("#code set language", function () {
+    mace.ace.insert("function () {\n  console.log(\"test\");\n}");
+    var range = new Ace.Range(0, 0, 2, 1);
     mace.ace.moveCursorTo(0, 0);
     mace.ace.selection.addRange(range);
 
