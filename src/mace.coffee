@@ -129,7 +129,7 @@ class Mace
 
     range = @_getCurrentRage()
 
-    if items.length > 0
+    if range.start.row is range.end.row and items.length > 0
       # init items mode
       @ace.insert items.map((item) -> "#{mark} #{item}").join("\n") + "\n"
     else
