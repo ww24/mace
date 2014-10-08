@@ -106,6 +106,15 @@ class Mace
     @ace.insert "#{image}[#{link_text}](#{href}#{title})"
     @ace.focus()
 
+  italic: (mark = "*", target_text = "italic") ->
+    selected_text = @ace.getCopyText().split("\n").join("")
+    target_text = selected_text or target_text
+    @ace.insert "#{mark}#{target_text}#{mark}"
+    @ace.focus()
+
+  bold: (mark = "**", target_text = "bold") ->
+    @italic mark, target_text
+
   getLineText: (row) ->
     pos = @ace.getCursorPosition()
     row = row or pos.row

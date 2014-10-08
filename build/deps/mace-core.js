@@ -152,6 +152,30 @@
       return this.ace.focus();
     };
 
+    Mace.prototype.italic = function(mark, target_text) {
+      var selected_text;
+      if (mark == null) {
+        mark = "*";
+      }
+      if (target_text == null) {
+        target_text = "italic";
+      }
+      selected_text = this.ace.getCopyText().split("\n").join("");
+      target_text = selected_text || target_text;
+      this.ace.insert("" + mark + target_text + mark);
+      return this.ace.focus();
+    };
+
+    Mace.prototype.bold = function(mark, target_text) {
+      if (mark == null) {
+        mark = "**";
+      }
+      if (target_text == null) {
+        target_text = "bold";
+      }
+      return this.italic(mark, target_text);
+    };
+
     Mace.prototype.getLineText = function(row) {
       var p, pos, text;
       pos = this.ace.getCursorPosition();

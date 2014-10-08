@@ -262,4 +262,88 @@ describe("Mace", function () {
     expect(pos.row).to.equal(5);
     expect(pos.column).to.equal(0);
   });
+
+  it("#italic (empty)", function () {
+    mace.italic();
+
+    expect(mace.value).to.equal("*italic*");
+  });
+
+  it("#italic (set mark & string)", function () {
+    mace.italic("_", "text");
+
+    expect(mace.value).to.equal("_text_");
+  });
+
+  it("#italic (selected)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+
+    mace.italic();
+
+    expect(mace.value).to.equal("This is a *editor*.");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(0);
+    expect(pos.column).to.equal(18);
+  });
+
+  it("#italic (selected_text is prior to target_text)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+
+    mace.italic("*", "text");
+
+    expect(mace.value).to.equal("This is a *editor*.");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(0);
+    expect(pos.column).to.equal(18);
+  });
+
+  it("#blod (empty)", function () {
+    mace.bold();
+
+    expect(mace.value).to.equal("**bold**");
+  });
+
+  it("#italic (set mark & string)", function () {
+    mace.bold("__", "text");
+
+    expect(mace.value).to.equal("__text__");
+  });
+
+  it("#italic (selected)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+
+    mace.bold();
+
+    expect(mace.value).to.equal("This is a **editor**.");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(0);
+    expect(pos.column).to.equal(20);
+  });
+
+  it("#italic (selected_text is prior to target_text)", function () {
+    mace.ace.insert("This is a editor.");
+    var range = new Ace.Range(0, 10, 0, 16);
+    mace.ace.moveCursorTo(0, 16);
+    mace.ace.selection.addRange(range);
+
+    mace.bold("**", "text");
+
+    expect(mace.value).to.equal("This is a **editor**.");
+
+    var pos = mace.ace.getCursorPosition();
+    expect(pos.row).to.equal(0);
+    expect(pos.column).to.equal(20);
+  });
 });
