@@ -312,7 +312,7 @@ describe("Mace", function () {
   });
 
   it("#italic (set mark & string)", function () {
-    mace.bold("__", "text");
+    mace.bold("_", "text");
 
     expect(mace.value).to.equal("__text__");
   });
@@ -338,7 +338,7 @@ describe("Mace", function () {
     mace.ace.moveCursorTo(0, 16);
     mace.ace.selection.addRange(range);
 
-    mace.bold("**", "text");
+    mace.bold("*", "text");
 
     expect(mace.value).to.equal("This is a **editor**.");
 

@@ -168,12 +168,12 @@
 
     Mace.prototype.bold = function(mark, target_text) {
       if (mark == null) {
-        mark = "**";
+        mark = "*";
       }
       if (target_text == null) {
         target_text = "bold";
       }
-      return this.italic(mark, target_text);
+      return this.italic(mark + mark, target_text);
     };
 
     Mace.prototype.getLineText = function(row) {

@@ -112,8 +112,8 @@ class Mace
     @ace.insert "#{mark}#{target_text}#{mark}"
     @ace.focus()
 
-  bold: (mark = "**", target_text = "bold") ->
-    @italic mark, target_text
+  bold: (mark = "*", target_text = "bold") ->
+    @italic mark + mark, target_text
 
   getLineText: (row) ->
     pos = @ace.getCursorPosition()
