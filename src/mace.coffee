@@ -115,6 +115,12 @@ class Mace
   bold: (mark = "*", target_text = "bold") ->
     @italic mark + mark, target_text
 
+  line: (mark = "*") ->
+    pos = @ace.getCursorPosition()
+
+    @ace.insert "\n" if pos.column > 0
+    @ace.insert "\n" + mark + mark + mark + "\n"
+
   getLineText: (row) ->
     pos = @ace.getCursorPosition()
     row = row or pos.row

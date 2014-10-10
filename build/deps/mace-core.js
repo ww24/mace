@@ -176,6 +176,18 @@
       return this.italic(mark + mark, target_text);
     };
 
+    Mace.prototype.line = function(mark) {
+      var pos;
+      if (mark == null) {
+        mark = "*";
+      }
+      pos = this.ace.getCursorPosition();
+      if (pos.column > 0) {
+        this.ace.insert("\n");
+      }
+      return this.ace.insert("\n" + mark + mark + mark + "\n");
+    };
+
     Mace.prototype.getLineText = function(row) {
       var p, pos, text;
       pos = this.ace.getCursorPosition();

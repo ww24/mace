@@ -346,4 +346,18 @@ describe("Mace", function () {
     expect(pos.row).to.equal(0);
     expect(pos.column).to.equal(20);
   });
+
+  it("#line", function () {
+    mace.line();
+
+    expect(mace.value).to.equal("\n***\n");
+  });
+
+  it("#line (set mark)", function () {
+    mace.ace.insert("This is a editor.");
+
+    mace.line("-");
+
+    expect(mace.value).to.equal("This is a editor.\n\n---\n");
+  });
 });
