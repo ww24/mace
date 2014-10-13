@@ -106,6 +106,21 @@ class Mace
     @ace.insert "#{image}[#{link_text}](#{href}#{title})"
     @ace.focus()
 
+  italic: (mark = "*", target_text = "italic") ->
+    selected_text = @ace.getCopyText().split("\n").join("")
+    target_text = selected_text or target_text
+    @ace.insert "#{mark}#{target_text}#{mark}"
+    @ace.focus()
+
+  bold: (mark = "*", target_text = "bold") ->
+    @italic mark + mark, target_text
+
+  line: (mark = "*") ->
+    pos = @ace.getCursorPosition()
+
+    @ace.insert "\n" if pos.column > 0
+    @ace.insert "\n" + mark + mark + mark + "\n"
+
   getLineText: (row) ->
     pos = @ace.getCursorPosition()
     row = row or pos.row
@@ -131,7 +146,12 @@ class Mace
 
     if range.start.row is range.end.row and items.length > 0
       # init items mode
-      @ace.insert items.map((item) -> "#{mark} #{item}").join("\n") + "\n"
+      if isNaN mark
+        template = (item) -> "#{mark} #{item}"
+      else
+        template = (item) -> "#{mark++}. #{item}"
+
+      @ace.insert items.map(template).join("\n") + "\n"
     else
       # get heading level and set it
       for row in [range.start.row..range.end.row]
@@ -139,7 +159,7 @@ class Mace
         # get line text
         text = @getLineText row
 
-        match = text.match /^(\s*)[*-](\s*)[^*-][^]+/i
+        match = text.match /^(\s*)([*-]|[0-9]\.)(\s*)[^]+/
         # detect list
         isList = match isnt null
         # set list
@@ -153,7 +173,10 @@ class Mace
           @ace.selection.addRange new @Ace.Range row, 0, row, space_size + 1
           @ace.remove "right"
         else
-          @ace.insert "#{mark} "
+          if isNaN mark
+            @ace.insert "#{mark} "
+          else
+            @ace.insert "#{mark++}. "
 
     @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()
@@ -198,5 +221,39 @@ class Mace
       @ace.setValue ""
     else
       @ace.removeLines()
+
+  quote: (str = "") ->
+    # curser position
+    pos = @ace.getCursorPosition()
+
+    range = @_getCurrentRage()
+
+    if range.start.row is range.end.row and str.length > 0
+      # init str mode
+      @ace.insert items.split("\n").map((line) -> "> #{line}").join("\n") + "\n"
+    else
+      for row in [range.start.row..range.end.row]
+        @ace.moveCursorTo row, 0
+        # get line text
+        text = @getLineText row
+
+        match = text.match /^(\s*)>(\s*)[^]*/
+        # detect quote
+        isQuote = match isnt null
+        # set quote
+        if isQuote
+          # detect indent size
+          indent_size = match?[1].length
+          @ace.moveCursorTo row, indent_size
+          # detect space
+          space_size = match?[2].length
+          # 範囲選択後に削除
+          @ace.selection.addRange new @Ace.Range row, indent_size, row, space_size + 1
+          @ace.remove "right"
+        else
+          @ace.insert "> "
+
+    @ace.moveCursorTo pos.row, pos.column + 2
+    @ace.focus()
 
 this.Mace = Mace

@@ -152,6 +152,42 @@
       return this.ace.focus();
     };
 
+    Mace.prototype.italic = function(mark, target_text) {
+      var selected_text;
+      if (mark == null) {
+        mark = "*";
+      }
+      if (target_text == null) {
+        target_text = "italic";
+      }
+      selected_text = this.ace.getCopyText().split("\n").join("");
+      target_text = selected_text || target_text;
+      this.ace.insert("" + mark + target_text + mark);
+      return this.ace.focus();
+    };
+
+    Mace.prototype.bold = function(mark, target_text) {
+      if (mark == null) {
+        mark = "*";
+      }
+      if (target_text == null) {
+        target_text = "bold";
+      }
+      return this.italic(mark + mark, target_text);
+    };
+
+    Mace.prototype.line = function(mark) {
+      var pos;
+      if (mark == null) {
+        mark = "*";
+      }
+      pos = this.ace.getCursorPosition();
+      if (pos.column > 0) {
+        this.ace.insert("\n");
+      }
+      return this.ace.insert("\n" + mark + mark + mark + "\n");
+    };
+
     Mace.prototype.getLineText = function(row) {
       var p, pos, text;
       pos = this.ace.getCursorPosition();
@@ -167,7 +203,7 @@
     };
 
     Mace.prototype.list = function(mark, items) {
-      var indent_size, isList, match, pos, range, row, space_size, text, _i, _ref, _ref1;
+      var indent_size, isList, match, pos, range, row, space_size, template, text, _i, _ref, _ref1;
       if (mark == null) {
         mark = "-";
       }
@@ -177,14 +213,21 @@
       pos = this.ace.getCursorPosition();
       range = this._getCurrentRage();
       if (range.start.row === range.end.row && items.length > 0) {
-        this.ace.insert(items.map(function(item) {
-          return "" + mark + " " + item;
-        }).join("\n") + "\n");
+        if (isNaN(mark)) {
+          template = function(item) {
+            return "" + mark + " " + item;
+          };
+        } else {
+          template = function(item) {
+            return "" + (mark++) + ". " + item;
+          };
+        }
+        this.ace.insert(items.map(template).join("\n") + "\n");
       } else {
         for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
           this.ace.moveCursorTo(row, 0);
           text = this.getLineText(row);
-          match = text.match(/^(\s*)[*-](\s*)[^*-][^]+/i);
+          match = text.match(/^(\s*)([*-]|[0-9]\.)(\s*)[^]+/);
           isList = match !== null;
           if (isList) {
             indent_size = match != null ? match[1].length : void 0;
@@ -193,7 +236,11 @@
             this.ace.selection.addRange(new this.Ace.Range(row, 0, row, space_size + 1));
             this.ace.remove("right");
           } else {
-            this.ace.insert("" + mark + " ");
+            if (isNaN(mark)) {
+              this.ace.insert("" + mark + " ");
+            } else {
+              this.ace.insert("" + (mark++) + ". ");
+            }
           }
         }
       }
@@ -249,6 +296,39 @@
       } else {
         return this.ace.removeLines();
       }
+    };
+
+    Mace.prototype.quote = function(str) {
+      var indent_size, isQuote, match, pos, range, row, space_size, text, _i, _ref, _ref1;
+      if (str == null) {
+        str = "";
+      }
+      pos = this.ace.getCursorPosition();
+      range = this._getCurrentRage();
+      if (range.start.row === range.end.row && str.length > 0) {
+        this.ace.insert(items.split("\n").map(function(line) {
+          return "> " + line;
+        }).join("\n") + "\n");
+      } else {
+        for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
+          this.ace.moveCursorTo(row, 0);
+          text = this.getLineText(row);
+          match = text.match(/^(\s*)>(\s*)[^]*/);
+          isQuote = match !== null;
+          if (isQuote) {
+            indent_size = match != null ? match[1].length : void 0;
+            this.ace.moveCursorTo(row, indent_size);
+            space_size = match != null ? match[2].length : void 0;
+            console.log(indent_size, space_size);
+            this.ace.selection.addRange(new this.Ace.Range(row, indent_size, row, space_size + 1));
+            this.ace.remove("right");
+          } else {
+            this.ace.insert("> ");
+          }
+        }
+      }
+      this.ace.moveCursorTo(pos.row, pos.column + 2);
+      return this.ace.focus();
     };
 
     return Mace;
