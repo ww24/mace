@@ -159,7 +159,7 @@ class Mace
         # get line text
         text = @getLineText row
 
-        match = text.match /^(\s*)([*-]|[0-9]\.)(\s*)[^]+/i
+        match = text.match /^(\s*)([*-]|[0-9]\.)(\s*)[^]+/
         # detect list
         isList = match isnt null
         # set list
@@ -221,5 +221,39 @@ class Mace
       @ace.setValue ""
     else
       @ace.removeLines()
+
+  quote: (str = "") ->
+    # curser position
+    pos = @ace.getCursorPosition()
+
+    range = @_getCurrentRage()
+
+    if range.start.row is range.end.row and str.length > 0
+      # init str mode
+      @ace.insert items.split("\n").map((line) -> "> #{line}").join("\n") + "\n"
+    else
+      for row in [range.start.row..range.end.row]
+        @ace.moveCursorTo row, 0
+        # get line text
+        text = @getLineText row
+
+        match = text.match /^(\s*)>(\s*)[^]*/
+        # detect quote
+        isQuote = match isnt null
+        # set quote
+        if isQuote
+          # detect indent size
+          indent_size = match?[1].length
+          @ace.moveCursorTo row, indent_size
+          # detect space
+          space_size = match?[2].length
+          # 範囲選択後に削除
+          @ace.selection.addRange new @Ace.Range row, indent_size, row, space_size + 1
+          @ace.remove "right"
+        else
+          @ace.insert "> "
+
+    @ace.moveCursorTo pos.row, pos.column + 2
+    @ace.focus()
 
 this.Mace = Mace

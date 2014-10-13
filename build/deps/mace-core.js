@@ -227,7 +227,7 @@
         for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
           this.ace.moveCursorTo(row, 0);
           text = this.getLineText(row);
-          match = text.match(/^(\s*)([*-]|[0-9]\.)(\s*)[^]+/i);
+          match = text.match(/^(\s*)([*-]|[0-9]\.)(\s*)[^]+/);
           isList = match !== null;
           if (isList) {
             indent_size = match != null ? match[1].length : void 0;
@@ -296,6 +296,39 @@
       } else {
         return this.ace.removeLines();
       }
+    };
+
+    Mace.prototype.quote = function(str) {
+      var indent_size, isQuote, match, pos, range, row, space_size, text, _i, _ref, _ref1;
+      if (str == null) {
+        str = "";
+      }
+      pos = this.ace.getCursorPosition();
+      range = this._getCurrentRage();
+      if (range.start.row === range.end.row && str.length > 0) {
+        this.ace.insert(items.split("\n").map(function(line) {
+          return "> " + line;
+        }).join("\n") + "\n");
+      } else {
+        for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
+          this.ace.moveCursorTo(row, 0);
+          text = this.getLineText(row);
+          match = text.match(/^(\s*)>(\s*)[^]*/);
+          isQuote = match !== null;
+          if (isQuote) {
+            indent_size = match != null ? match[1].length : void 0;
+            this.ace.moveCursorTo(row, indent_size);
+            space_size = match != null ? match[2].length : void 0;
+            console.log(indent_size, space_size);
+            this.ace.selection.addRange(new this.Ace.Range(row, indent_size, row, space_size + 1));
+            this.ace.remove("right");
+          } else {
+            this.ace.insert("> ");
+          }
+        }
+      }
+      this.ace.moveCursorTo(pos.row, pos.column + 2);
+      return this.ace.focus();
     };
 
     return Mace;

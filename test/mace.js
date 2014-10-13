@@ -463,4 +463,53 @@ describe("Mace", function () {
     });
   });
 
+  describe("#quote", function () {
+    it("empty", function () {
+      mace.quote();
+
+      expect(mace.value).to.equal("> ");
+      var pos = mace.ace.getCursorPosition();
+      expect(pos.row).to.equal(0);
+      expect(pos.column).to.equal(2);
+    });
+
+    it("1 line", function () {
+      mace.ace.insert("This is a editor.");
+
+      mace.quote();
+
+      expect(mace.value).to.equal("> This is a editor.");
+    });
+
+    it("toggle reset", function () {
+      mace.ace.insert("> This is a editor.");
+
+      mace.quote();
+
+      expect(mace.value).to.equal("This is a editor.");
+    });
+
+    it("select multi lines", function () {
+      mace.ace.insert("This is a editor.\nMace = Markdown editor powered by Ace.\n");
+      var range = new Ace.Range(0, 0, 2, 0);
+      mace.ace.moveCursorTo(2, 0);
+      mace.ace.selection.addRange(range);
+
+      mace.quote();
+
+      expect(mace.value).to.equal("> This is a editor.\n> Mace = Markdown editor powered by Ace.\n> ");
+    });
+
+    it("toggle reset (multi lines)", function () {
+      mace.ace.insert("> This is a editor.\n> Mace = Markdown editor powered by Ace.\n> ");
+      var range = new Ace.Range(0, 0, 2, 0);
+      mace.ace.moveCursorTo(2, 0);
+      mace.ace.selection.addRange(range);
+
+      mace.quote();
+
+      expect(mace.value).to.equal("This is a editor.\nMace = Markdown editor powered by Ace.\n");
+    });
+  });
+
 });
