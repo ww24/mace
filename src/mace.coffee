@@ -146,7 +146,12 @@ class Mace
 
     if range.start.row is range.end.row and items.length > 0
       # init items mode
-      @ace.insert items.map((item) -> "#{mark} #{item}").join("\n") + "\n"
+      if isNaN mark
+        template = (item) -> "#{mark} #{item}"
+      else
+        template = (item) -> "#{mark++}. #{item}"
+
+      @ace.insert items.map(template).join("\n") + "\n"
     else
       # get heading level and set it
       for row in [range.start.row..range.end.row]
@@ -154,7 +159,7 @@ class Mace
         # get line text
         text = @getLineText row
 
-        match = text.match /^(\s*)[*-](\s*)[^*-][^]+/i
+        match = text.match /^(\s*)([*-]|[0-9]\.)(\s*)[^]+/i
         # detect list
         isList = match isnt null
         # set list
@@ -168,7 +173,10 @@ class Mace
           @ace.selection.addRange new @Ace.Range row, 0, row, space_size + 1
           @ace.remove "right"
         else
-          @ace.insert "#{mark} "
+          if isNaN mark
+            @ace.insert "#{mark} "
+          else
+            @ace.insert "#{mark++}. "
 
     @ace.moveCursorTo pos.row, pos.column + 2
     @ace.focus()

@@ -203,7 +203,7 @@
     };
 
     Mace.prototype.list = function(mark, items) {
-      var indent_size, isList, match, pos, range, row, space_size, text, _i, _ref, _ref1;
+      var indent_size, isList, match, pos, range, row, space_size, template, text, _i, _ref, _ref1;
       if (mark == null) {
         mark = "-";
       }
@@ -213,14 +213,21 @@
       pos = this.ace.getCursorPosition();
       range = this._getCurrentRage();
       if (range.start.row === range.end.row && items.length > 0) {
-        this.ace.insert(items.map(function(item) {
-          return "" + mark + " " + item;
-        }).join("\n") + "\n");
+        if (isNaN(mark)) {
+          template = function(item) {
+            return "" + mark + " " + item;
+          };
+        } else {
+          template = function(item) {
+            return "" + (mark++) + ". " + item;
+          };
+        }
+        this.ace.insert(items.map(template).join("\n") + "\n");
       } else {
         for (row = _i = _ref = range.start.row, _ref1 = range.end.row; _ref <= _ref1 ? _i <= _ref1 : _i >= _ref1; row = _ref <= _ref1 ? ++_i : --_i) {
           this.ace.moveCursorTo(row, 0);
           text = this.getLineText(row);
-          match = text.match(/^(\s*)[*-](\s*)[^*-][^]+/i);
+          match = text.match(/^(\s*)([*-]|[0-9]\.)(\s*)[^]+/i);
           isList = match !== null;
           if (isList) {
             indent_size = match != null ? match[1].length : void 0;
@@ -229,7 +236,11 @@
             this.ace.selection.addRange(new this.Ace.Range(row, 0, row, space_size + 1));
             this.ace.remove("right");
           } else {
-            this.ace.insert("" + mark + " ");
+            if (isNaN(mark)) {
+              this.ace.insert("" + mark + " ");
+            } else {
+              this.ace.insert("" + (mark++) + ". ");
+            }
           }
         }
       }

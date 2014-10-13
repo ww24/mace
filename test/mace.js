@@ -163,19 +163,41 @@ describe("Mace", function () {
 
   it("#list", function () {
     mace.ace.insert("list item 1");
+
     mace.list();
+
     expect(mace.value).to.equal("- list item 1");
+  });
+
+  it("#list (numeric)", function () {
+    mace.ace.insert("list item 1");
+
+    mace.list(1);
+
+    expect(mace.value).to.equal("1. list item 1");
   });
 
   it("#list toggle reset", function () {
     mace.ace.insert("- list item 1");
+
     mace.list();
+
+    expect(mace.value).to.equal("list item 1");
+  });
+
+  it("#list toggle reset (numeric)", function () {
+    mace.ace.insert("1. list item 1");
+
+    mace.list();
+
     expect(mace.value).to.equal("list item 1");
   });
 
   it("#list *", function () {
     mace.ace.insert("list item 1");
+
     mace.list("*");
+
     expect(mace.value).to.equal("* list item 1");
   });
 
@@ -184,8 +206,21 @@ describe("Mace", function () {
     var range = new Ace.Range(0, 0, 1, 1);
     mace.ace.moveCursorTo(0, 0);
     mace.ace.selection.addRange(range);
+
     mace.list();
+
     expect(mace.value).to.equal("- list item 1\n- list item 2");
+  });
+
+  it("#list multi lines (numeric)", function () {
+    mace.ace.insert("list item 1\nlist item 2");
+    var range = new Ace.Range(0, 0, 1, 1);
+    mace.ace.moveCursorTo(0, 0);
+    mace.ace.selection.addRange(range);
+
+    mace.list(1);
+
+    expect(mace.value).to.equal("1. list item 1\n2. list item 2");
   });
 
   it("#list multi lines (toggle reset)", function () {
@@ -193,7 +228,20 @@ describe("Mace", function () {
     var range = new Ace.Range(0, 0, 1, 1);
     mace.ace.moveCursorTo(0, 0);
     mace.ace.selection.addRange(range);
+
     mace.list();
+
+    expect(mace.value).to.equal("list item 1\nlist item 2");
+  });
+
+  it("#list multi lines (toggle reset, numeric)", function () {
+    mace.ace.insert("1. list item 1\n2. list item 2");
+    var range = new Ace.Range(0, 0, 1, 1);
+    mace.ace.moveCursorTo(0, 0);
+    mace.ace.selection.addRange(range);
+
+    mace.list();
+
     expect(mace.value).to.equal("list item 1\nlist item 2");
   });
 
@@ -201,6 +249,12 @@ describe("Mace", function () {
     mace.list("*", ["item 1", "item 2", "item 3"]);
 
     expect(mace.value).to.equal("* item 1\n* item 2\n* item 3\n");
+  });
+
+  it("#list set initial items (numeric)", function () {
+    mace.list(2, ["item 1", "item 2", "item 3"]);
+
+    expect(mace.value).to.equal("2. item 1\n3. item 2\n4. item 3\n");
   });
 
   it("#code", function () {
