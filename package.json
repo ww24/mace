@@ -1,6 +1,6 @@
 {
   "name": "mace",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Mace = Markdown editor powered by Ace.",
   "main": "gulpfile.js",
   "scripts": {
@@ -20,7 +20,6 @@
     "url": "https://github.com/ww24/mace/issues"
   },
   "homepage": "http://ww24.info/mace",
-  "private": true,
   "devDependencies": {
     "chai": "^1.9.2",
     "coveralls": "^2.11.2",

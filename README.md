@@ -5,11 +5,11 @@ Mace = Markdown editor powered by Ace.
 
 [Live Demo](http://ww24.info/mace/example/)
 
-Feature (coming soon)
+Feature
 -------
 * Markdown Syntax Highlight
 * Markdown Preview
-* Markdown Extra syntax support
+* Markdown Extra syntax support (coming soon)
 * GUI for Markdown syntax
 
 Usage

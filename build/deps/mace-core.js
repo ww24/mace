@@ -1,6 +1,6 @@
 
 /*!
- * Mace 0.0.1
+ * Mace 0.1.0
  * copyright: Takenori Nakagawa
  * license: MIT
  */
@@ -319,7 +319,6 @@
             indent_size = match != null ? match[1].length : void 0;
             this.ace.moveCursorTo(row, indent_size);
             space_size = match != null ? match[2].length : void 0;
-            console.log(indent_size, space_size);
             this.ace.selection.addRange(new this.Ace.Range(row, indent_size, row, space_size + 1));
             this.ace.remove("right");
           } else {
