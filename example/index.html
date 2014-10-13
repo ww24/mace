@@ -53,13 +53,13 @@
   <div id="editor" class="editor">
     <div class="buttons">
       <div class="btn-group btn-group-sm">
-        <div id="indent" class="btn btn-default">
-          <span class="glyphicon glyphicon-indent-left"></span>
-        </div>
-        <div id="outdent" class="btn btn-default">
+        <div class="btn btn-default outdent" title="インデントを減らす">
           <span class="glyphicon glyphicon-indent-right"></span>
         </div>
-        <div id="heading" class="btn-group btn-group-sm">
+        <div class="btn btn-default indent" title="インデントを増やす">
+          <span class="glyphicon glyphicon-indent-left"></span>
+        </div>
+        <div class="btn-group btn-group-sm heading">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             Heading
             <span class="caret"></span>
@@ -73,8 +73,32 @@
             <li><a href="#">h6</a></li>
           </ul>
         </div>
-        <div id="save" class="btn btn-default">
-          <span class="glyphicon glyphicon-floppy-disk"></span>
+        <div class="btn btn-default bold">
+            <span class="glyphicon glyphicon-bold" title="太字"></span>
+        </div>
+        <div class="btn btn-default italic">
+            <span class="glyphicon glyphicon-italic" title="斜体"></span>
+        </div>
+        <div class="btn btn-default line">
+            <span class="glyphicon glyphicon-minus" title="罫線の挿入"></span>
+        </div>
+        <div class="btn btn-default list">
+            <span class="glyphicon glyphicon-list" title="リストの挿入"></span>
+        </div>
+        <div class="btn btn-default quote">
+            <span class="glyphicon glyphicon-book" title="引用の挿入"></span>
+        </div>
+        <div class="btn btn-default code">
+            <span class="glyphicon glyphicon-pencil" title="コードの挿入"></span>
+        </div>
+        <div class="btn btn-default link">
+            <span class="glyphicon glyphicon-link" title="リンクの挿入"></span>
+        </div>
+        <div class="btn btn-default image">
+            <span class="glyphicon glyphicon-picture" title="画像の挿入"></span>
+        </div>
+        <div class="btn btn-default save">
+          <span class="glyphicon glyphicon-floppy-disk" title="保存"></span>
         </div>
       </div>
     </div>
@@ -98,10 +122,12 @@ Mace = Markdown editor powered by Ace.
 
       mace = new Mace(editor, preview);
 
-      $("#indent").click(mace.indent.bind(mace, 1));
-      $("#outdent").click(mace.outdent.bind(mace, 1));
+      var $editor = $("#editor");
 
-      var $heading = $("#heading li");
+      $editor.find(".indent").click(mace.indent.bind(mace, 1));
+      $editor.find(".outdent").click(mace.outdent.bind(mace, 1));
+
+      var $heading = $editor.find(".heading li");
       $heading.click(function () {
         var level = $heading.index(this) + 1;
         mace.heading(level);
@@ -110,7 +136,16 @@ Mace = Markdown editor powered by Ace.
         return false;
       });
 
-      $("#save").click(function () {
+      $editor.find(".line").click(mace.line.bind(mace, "*"));
+      $editor.find(".bold").click(mace.bold.bind(mace, "*", "bold text"));
+      $editor.find(".italic").click(mace.italic.bind(mace, "*", "italic text"));
+      $editor.find(".list").click(mace.list.bind(mace, "-"));
+      $editor.find(".quote").click(mace.quote.bind(mace, ""));
+      $editor.find(".code").click(mace.code.bind(mace, "code", "js"));
+      $editor.find(".link").click(mace.link.bind(mace, "url", "リンク", "タイトル", false));
+      $editor.find(".image").click(mace.link.bind(mace, "url", "画像",　"タイトル", true));
+
+      $editor.find(".save").click(function () {
         console.log(mace.value);
         alert("markdown を console に出力しました。");
       });
