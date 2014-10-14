@@ -1,6 +1,6 @@
 
 /*!
- * Mace 0.1.0
+ * Mace 0.1.1
  * copyright: Takenori Nakagawa
  * license: MIT
  */
@@ -306,7 +306,7 @@
       pos = this.ace.getCursorPosition();
       range = this._getCurrentRage();
       if (range.start.row === range.end.row && str.length > 0) {
-        this.ace.insert(items.split("\n").map(function(line) {
+        this.ace.insert(str.split("\n").map(function(line) {
           return "> " + line;
         }).join("\n") + "\n");
       } else {
