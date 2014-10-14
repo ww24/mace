@@ -1,5 +1,5 @@
 ###!
-# Mace 0.1.0
+# Mace 0.1.1
 # copyright: Takenori Nakagawa
 # license: MIT
 ###
@@ -230,7 +230,7 @@ class Mace
 
     if range.start.row is range.end.row and str.length > 0
       # init str mode
-      @ace.insert items.split("\n").map((line) -> "> #{line}").join("\n") + "\n"
+      @ace.insert str.split("\n").map((line) -> "> #{line}").join("\n") + "\n"
     else
       for row in [range.start.row..range.end.row]
         @ace.moveCursorTo row, 0

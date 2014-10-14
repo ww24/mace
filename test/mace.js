@@ -510,6 +510,12 @@ describe("Mace", function () {
 
       expect(mace.value).to.equal("This is a editor.\nMace = Markdown editor powered by Ace.\n");
     });
+
+    it("set initial string", function () {
+      mace.quote("This is a editor.\nMace = Markdown editor powered by Ace.\n");
+
+      expect(mace.value).to.equal("> This is a editor.\n> Mace = Markdown editor powered by Ace.\n> \n");
+    });
   });
 
 });
