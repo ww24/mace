@@ -1,6 +1,6 @@
 
 /*!
- * Mace 0.1.1
+ * Mace 0.1.2
  * copyright: Takenori Nakagawa
  * license: MIT
  */
