@@ -1,13 +1,17 @@
 
 /*!
- * Mace 0.1.2
- * copyright: Takenori Nakagawa
- * license: MIT
+ * Mace 0.1.3
+ * https://github.com/ww24/mace
+ *
+ * Copyright (c) 2014 Takenori Nakagawa
+ * Licensed under the MIT license.
  */
 
 (function() {
   "use strict";
-  var Mace;
+  var Mace, ace_theme;
+
+  ace_theme = "monokai";
 
   Mace = (function() {
     function Mace(editor, preview, options) {
@@ -23,7 +27,7 @@
       };
       this.ace = ace.edit(this.editor);
       this.ace.getSession().setMode("ace/mode/markdown");
-      this.ace.setTheme("ace/theme/monokai");
+      this.ace.setTheme("ace/theme/" + ace_theme);
       marked.setOptions({
         renderer: new marked.Renderer(),
         gfm: true,
