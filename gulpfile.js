@@ -2,18 +2,21 @@
  * Gulp build script
  */
 
-var ace_deps = [
-  "ace.js",
-  "mode-markdown.js",
-  "theme-monokai.js"
-];
-
 var gulp = require("gulp"),
     plug = require("gulp-load-plugins")(),
-    del = require("del");
+    del = require("del"),
+    config = require("config");
+
+var ace_deps = [
+  "ace.js",
+  "mode-markdown.js"
+];
+
+// set ace theme
+ace_deps.push("theme-" + config.ace.theme + ".js");
 
 ace_deps = ace_deps.map(function (file) {
-  return "ace/build/src-min-noconflict/" + file;
+  return "ace/build/src-noconflict/" + file;
 });
 
 gulp.task("clean", function (done) {
@@ -22,6 +25,7 @@ gulp.task("clean", function (done) {
 
 gulp.task("mace", function () {
   return gulp.src("src/*.coffee")
+    .pipe(plug.replace("((\"monokai\"))", "\"" + config.ace.theme + "\""))
     .pipe(plug.coffee())
     .pipe(plug.concat("mace-core.js"))
     .pipe(gulp.dest("build/deps"))
@@ -33,6 +37,10 @@ gulp.task("mace", function () {
 gulp.task("ace", function () {
   return gulp.src(ace_deps)
     .pipe(plug.insert.append(";"))
+    .pipe(plug.uglify({preserveComments: function (node, comment) {
+      // check license comment
+      return !!~ comment.value.indexOf("license");
+    }}))
     .pipe(plug.concat("ace.min.js"))
     .pipe(gulp.dest("build/deps"));
 });

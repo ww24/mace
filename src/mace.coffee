@@ -1,10 +1,14 @@
 ###!
-# Mace 0.1.2
-# copyright: Takenori Nakagawa
-# license: MIT
+# Mace 0.1.3
+# https://github.com/ww24/mace
+#
+# Copyright (c) 2014 Takenori Nakagawa
+# Licensed under the MIT license.
 ###
 
 "use strict"
+
+ace_theme = (("monokai"))
 
 ## new mace(DOMElement editor, DOMElement preview[, options])
 class Mace
@@ -18,7 +22,7 @@ class Mace
     ## ace settings
     @ace = ace.edit @editor
     @ace.getSession().setMode "ace/mode/markdown"
-    @ace.setTheme "ace/theme/monokai"
+    @ace.setTheme "ace/theme/#{ace_theme}"
 
     ## marked settings
     marked.setOptions

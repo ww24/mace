@@ -22,6 +22,12 @@ How to build
 1. `npm start`
 1. open `example/index.html`
 
+Config
+------
+`config/default.yml`
+
+For example it can change the theme.
+
 Test
 ----
 1. install PhantomJS and Firefox
